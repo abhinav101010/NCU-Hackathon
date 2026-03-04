@@ -68,3 +68,80 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+```
+hackathon
+├─ README.md
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ favicon.ico
+│  ├─ index.html
+│  ├─ logo192.png
+│  ├─ logo512.png
+│  ├─ manifest.json
+│  └─ robots.txt
+└─ src
+   ├─ App.js
+   ├─ components
+   │  ├─ Countdown.js
+   │  ├─ EventCard.js
+   │  ├─ Footer.js
+   │  ├─ Navbar.js
+   │  ├─ NetworkBackground.js
+   │  ├─ ProtectedAdminRoute.js
+   │  ├─ ProtectedTeamRoute.js
+   │  ├─ RegistrationForm.js
+   │  ├─ SectionHeading.js
+   │  ├─ Sponsors.js
+   │  └─ ThemeCard.js
+   ├─ data-static
+   │  ├─ events.js
+   │  ├─ rules.js
+   │  ├─ sponsors.js
+   │  └─ themes.js
+   ├─ index.js
+   ├─ pages
+   │  ├─ AboutPage.js
+   │  ├─ ContactUsPage.js
+   │  ├─ EventPage.js
+   │  ├─ FAQ.js
+   │  ├─ HackathonUI_Reference.js
+   │  ├─ HomePage.js
+   │  ├─ RegisterPage.js
+   │  ├─ RulePage.js
+   │  ├─ ThemePage.js
+   │  └─ matrix
+   │     ├─ AdminPage.js
+   │     ├─ Dashboard.js
+   │     ├─ LoginPage.js
+   │     └─ TeamLoginPage.js
+   ├─ reportWebVitals.js
+   ├─ server
+   │  ├─ .env
+   │  ├─ createAdmin.js
+   │  ├─ middleware
+   │  │  └─ authTeam.js
+   │  ├─ models
+   │  │  ├─ Admin.js
+   │  │  ├─ Event.js
+   │  │  ├─ Registration.js
+   │  │  ├─ Rule.js
+   │  │  ├─ Sponsor.js
+   │  │  └─ Theme.js
+   │  ├─ package-lock.json
+   │  ├─ package.json
+   │  ├─ routes
+   │  │  ├─ adminRoutes.js
+   │  │  ├─ auth.js
+   │  │  ├─ eventsRoutes.js
+   │  │  ├─ registrationRoutes.js
+   │  │  ├─ rulesRoutes.js
+   │  │  ├─ sponsorsRoutes.js
+   │  │  └─ themesRoutes.js
+   │  ├─ seed.js
+   │  └─ server.js
+   ├─ setupTests.js
+   └─ theme.js
+
+```
