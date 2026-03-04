@@ -1,6 +1,7 @@
 import { ThemeProvider, CssBaseline, Box } from "@mui/material";
 import { Routes, Route, useLocation } from "react-router-dom";
-import theme from "./theme";
+import { useState, useEffect } from "react";
+import { darkNeon, lightTheme, studentTheme } from "./theme";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -26,15 +27,31 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
+  const [themeName, setThemeName] = useState(
+    localStorage.getItem("theme") || "dark",
+  );
+
+  const themes = {
+    dark: darkNeon,
+    light: lightTheme,
+    student: studentTheme,
+  };
+
+  const currentTheme = themes[themeName];
+
+  useEffect(() => {
+    localStorage.setItem("theme", themeName);
+  }, [themeName]);
+
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currentTheme}>
       <CssBaseline />
 
       {/* Background */}
       <NetworkBackground />
 
       <Box sx={{ position: "relative", zIndex: 1 }}>
-        <Navbar />
+        <Navbar themeName={themeName} setThemeName={setThemeName} />
 
         <Routes>
           {/* PUBLIC ROUTES */}
