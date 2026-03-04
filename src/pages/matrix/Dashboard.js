@@ -14,6 +14,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
+import { API } from "../../utils/api";
 
 export default function Dashboard() {
   const [team, setTeam] = useState(null);
@@ -28,7 +29,7 @@ export default function Dashboard() {
   }, []);
 
   const loadTeam = async () => {
-    const res = await fetch("http://localhost:5000/api/registrations/me", {
+    const res = await fetch(`${API}/api/registrations/me`, {
       headers: { Authorization: token },
     });
 
@@ -37,7 +38,7 @@ export default function Dashboard() {
   };
 
   const loadThemes = async () => {
-    const res = await fetch("http://localhost:5000/api/themes");
+    const res = await fetch(`${API}/api/themes`);
     const data = await res.json();
     setThemes(data);
   };
@@ -63,7 +64,7 @@ export default function Dashboard() {
     };
 
     const res = await fetch(
-      "http://localhost:5000/api/registrations/me",
+      `${API}/api/registrations/me`,
       {
         method: "PUT",
         headers: {

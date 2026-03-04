@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import toast, { Toaster } from "react-hot-toast";
+import { API } from "../utils/api";
 // import tracks from "../server/data/tracks.json";
 // import sponsors from "../server/data/sponsors.json";
 // import events from "../server/data/events.json";
@@ -274,7 +275,8 @@ export default function HackathonUI() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "#00ffa3";
+        const color = theme.palette.primary.main;
+        ctx.fillStyle = color;
         ctx.fill();
 
         for (let j = i + 1; j < num; j++) {
@@ -370,7 +372,7 @@ export default function HackathonUI() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/registrations", {
+      const response = await fetch(`${API}/api/registrations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -885,7 +887,7 @@ export default function HackathonUI() {
                 transition: "0.3s",
                 "&:hover": {
                   transform: "translateX(10px)",
-                  boxShadow: "0 0 20px #00ffa3",
+                  boxShadow: (theme) => `0 0 20px ${theme.palette.primary.main}`,
                 },
               }}
             >
@@ -908,7 +910,7 @@ export default function HackathonUI() {
               <DialogTitle
                 sx={{
                   background: "linear-gradient(90deg,#ff0080,#00ffa3)",
-                  color: "white",
+                  color: "text.primary",
                   fontWeight: "bold",
                 }}
               >
@@ -969,7 +971,7 @@ export default function HackathonUI() {
                 bottom: 20,
                 right: 20,
                 background: "linear-gradient(45deg,#ff0080,#00ffa3)",
-                color: "white",
+                color: "text.primary",
                 "&:hover": { transform: "scale(1.2)" },
               }}
             >

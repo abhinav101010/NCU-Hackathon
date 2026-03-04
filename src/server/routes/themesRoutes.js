@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Theme = require("../models/Theme");
+const upload = require("../middleware/upload");
 
 // GET all themes
 router.get("/", async (req, res) => {
@@ -17,35 +18,61 @@ router.get("/:id", async (req, res) => {
   try {
     const theme = await Theme.findById(req.params.id);
     res.json(theme);
-  } catch (err) {
+  } catch {
     res.status(404).json({ error: "Theme not found" });
   }
 });
 
-// CREATE theme
-router.post("/", async (req, res) => {
+
+// CREATE theme (with image upload)
+router.post("/", upload.single("img"), async (req, res) => {
   try {
-    const newTheme = new Theme(req.body);
+    if (!req.file) {
+      return res.status(400).json({ error: "Image is required" });
+    }
+
+    const newTheme = new Theme({
+      title: req.body.title,
+      desc: req.body.desc,
+      img: `/uploads/themes/${req.file.filename}`,
+    });
+
     await newTheme.save();
+
     res.status(201).json(newTheme);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// UPDATE theme
-router.put("/:id", async (req, res) => {
+
+// UPDATE theme (image optional)
+router.put("/:id", upload.single("img"), async (req, res) => {
   try {
+
+    const updateData = {
+      title: req.body.title,
+      desc: req.body.desc,
+    };
+
+    // if new image uploaded
+    if (req.file) {
+      updateData.img = `/uploads/themes/${req.file.filename}`;
+    }
+
     const updated = await Theme.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true }
     );
+
     res.json(updated);
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
 
 // DELETE theme
 router.delete("/:id", async (req, res) => {

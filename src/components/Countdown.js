@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export default function Countdown() {
+  const theme = useTheme();
+
   const hackathonDate = new Date("2026-03-26T00:00:00");
+
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -48,17 +52,20 @@ export default function Countdown() {
               py: 2,
               borderRadius: 3,
               textAlign: "center",
-              background: "#111", // solid dark background
-              border: "1px solid rgba(0,255,163,0.4)",
-              boxShadow: "0 0 20px rgba(0,255,163,0.5)",
+
+              background: theme.palette.background.paper,
+
+              border: `1px solid ${theme.palette.primary.main}`,
+
+              boxShadow: `0 0 20px ${theme.palette.primary.main}55`,
             }}
           >
             <Typography
               variant="h4"
               sx={{
                 fontWeight: "bold",
-                color: "#00ffa3",
-                textShadow: "0 0 10px #00ffa3",
+                color: theme.palette.primary.main,
+                textShadow: `0 0 10px ${theme.palette.primary.main}`,
               }}
             >
               {timeLeft[unit]}
@@ -66,21 +73,24 @@ export default function Countdown() {
 
             <Typography
               variant="caption"
-              sx={{ color: "gray", letterSpacing: 1 }}
+              sx={{
+                color: theme.palette.text.secondary,
+                letterSpacing: 1,
+              }}
             >
               {unit.toUpperCase()}
             </Typography>
           </Box>
 
-          {/* Colon (except last item) */}
+          {/* Colon */}
           {index !== units.length - 1 && (
             <Typography
               variant="h4"
               sx={{
                 mx: 1,
                 fontWeight: "bold",
-                color: "#ff0080",
-                textShadow: "0 0 10px #ff0080",
+                color: theme.palette.secondary.main,
+                textShadow: `0 0 8px ${theme.palette.secondary.main}`,
               }}
             >
               :

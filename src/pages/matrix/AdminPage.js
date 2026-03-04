@@ -24,8 +24,9 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { API } from "../../utils/api";
 
-const API = "http://localhost:5000/api";
+// const API = "http://localhost:5000/api";
 
 export default function AdminPage() {
   const [tab, setTab] = useState(0);
@@ -33,6 +34,7 @@ export default function AdminPage() {
   const [registrations, setRegistrations] = useState([]);
   const [form, setForm] = useState({});
   const [editingId, setEditingId] = useState(null);
+  const [image, setImage] = useState(null);
 
   const names = ["themes", "events", "rules", "sponsors"];
   const currentName = names[tab];
@@ -48,13 +50,13 @@ export default function AdminPage() {
   }, [tab]);
 
   const loadData = async () => {
-    const res = await fetch(`${API}/${currentName}`);
+    const res = await fetch(`${API}/api/${currentName}`);
     const json = await res.json();
     setData(json);
   };
 
   const loadRegistrations = async () => {
-    const res = await fetch(`${API}/registrations`);
+    const res = await fetch(`${API}/api/registrations`);
     const json = await res.json();
     setRegistrations(json);
   };
@@ -63,32 +65,51 @@ export default function AdminPage() {
 
   const handleSubmit = async () => {
     const method = editingId ? "PUT" : "POST";
+
     const url = editingId
-      ? `${API}/${currentName}/${editingId}`
-      : `${API}/${currentName}`;
+      ? `${API}/api/${currentName}/${editingId}`
+      : `${API}/api/${currentName}`;
 
-    const payload =
-      currentName === "rules"
-        ? { text: form.text }
-        : form;
+    if (currentName === "rules") {
+      await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: form.text }),
+      });
+    } else {
+      const formData = new FormData();
 
-    await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+      // append form fields except img
+      Object.keys(form).forEach((key) => {
+        if (key !== "img" && key !== "_id") {
+          formData.append(key, form[key]);
+        }
+      });
+
+      // append image if selected
+      if (image) {
+        formData.append("img", image);
+      }
+
+      await fetch(url, {
+        method,
+        body: formData,
+      });
+    }
 
     setForm({});
+    setImage(null);
     setEditingId(null);
+
     loadData();
   };
 
   // ================= DELETE =================
 
   const handleDelete = async (id) => {
-    await fetch(`${API}/${currentName}/${id}`, {
+    await fetch(`${API}/api/${currentName}/${id}`, {
       method: "DELETE",
     });
 
@@ -98,19 +119,22 @@ export default function AdminPage() {
   // ================= EDIT =================
 
   const handleEdit = (item) => {
-    setEditingId(item._id);
+  setEditingId(item._id);
 
     if (currentName === "rules") {
       setForm({ text: item.text });
     } else {
-      setForm(item);
+      const { img, _id, ...rest } = item;
+      setForm(rest);
     }
+
+    setImage(null);
   };
 
   // ================= DELETE REGISTRATION =================
 
   const deleteRegistration = async (id) => {
-    await fetch(`${API}/registrations/${id}`, {
+    await fetch(`${API}/api/registrations/${id}`, {
       method: "DELETE",
     });
 
@@ -187,9 +211,7 @@ export default function AdminPage() {
                     label="Sponsor Name"
                     fullWidth
                     value={form.name || ""}
-                    onChange={(e) =>
-                      setForm({ ...form, name: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
                   />
                 </Grid>
               )}
@@ -197,14 +219,21 @@ export default function AdminPage() {
               {/* IMAGE FIELD */}
               {currentName !== "rules" && (
                 <Grid item xs={4}>
-                  <TextField
-                    label="Image URL"
-                    fullWidth
-                    value={form.img || ""}
-                    onChange={(e) =>
-                      setForm({ ...form, img: e.target.value })
-                    }
-                  />
+                  <Button variant="outlined" component="label" fullWidth>
+                    Upload Image
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={(e) => setImage(e.target.files[0])}
+                    />
+                  </Button>
+
+                  {image && (
+                    <Typography sx={{ mt: 1, fontSize: 12 }}>
+                      {image.name}
+                    </Typography>
+                  )}
                 </Grid>
               )}
 
@@ -215,9 +244,7 @@ export default function AdminPage() {
                     label="Rule Text"
                     fullWidth
                     value={form.text || ""}
-                    onChange={(e) =>
-                      setForm({ ...form, text: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, text: e.target.value })}
                   />
                 </Grid>
               )}
@@ -256,9 +283,7 @@ export default function AdminPage() {
                     </Typography>
 
                     {item.desc && (
-                      <Typography color="gray">
-                        {item.desc}
-                      </Typography>
+                      <Typography color="gray">{item.desc}</Typography>
                     )}
 
                     {item.date && (
@@ -294,10 +319,7 @@ export default function AdminPage() {
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Typography variant="h6">Registrations</Typography>
 
-            <Button
-              startIcon={<RefreshIcon />}
-              onClick={loadRegistrations}
-            >
+            <Button startIcon={<RefreshIcon />} onClick={loadRegistrations}>
               Refresh
             </Button>
           </Toolbar>

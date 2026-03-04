@@ -7,6 +7,7 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { API } from "../../utils/api";
 
 export default function TeamLoginPage() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function TeamLoginPage() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/registrations/login", {
+      const res = await fetch(`${API}/api/registrations/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

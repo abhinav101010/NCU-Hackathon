@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Event = require("../models/Event");
+const upload = require("../middleware/upload");
 
 // GET all
 router.get("/", async (req, res) => {
@@ -23,13 +24,27 @@ router.get("/:id", async (req, res) => {
 });
 
 // CREATE
-router.post("/", async (req, res) => {
+router.post("/", upload.single("img"), async (req, res) => {
   try {
-    const newEvent = new Event(req.body);
-    await newEvent.save();
-    res.status(201).json(newEvent);
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Image is required" });
+    }
+
+    const event = new Event({
+      title: req.body.title,
+      desc: req.body.desc,
+      date: req.body.date,
+      img: `/uploads/events/${req.file.filename}`,
+    });
+
+    await event.save();
+
+    res.status(201).json(event);
+
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 

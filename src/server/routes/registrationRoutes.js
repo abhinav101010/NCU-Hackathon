@@ -1,8 +1,10 @@
 const express = require("express");
+const sendTeamCode = require("../utils/sendMail");
 const router = express.Router();
 const Registration = require("../models/Registration");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+// const teamCode = "TEAM-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
 //
 // 🔹 LOGIN TEAM (MUST COME FIRST)
@@ -13,18 +15,16 @@ router.post("/login", async (req, res) => {
   try {
     const team = await Registration.findOne({ email });
 
-    if (!team)
-      return res.status(404).json({ error: "Team not found" });
+    if (!team) return res.status(404).json({ error: "Team not found" });
 
     const isMatch = await bcrypt.compare(password, team.password);
 
-    if (!isMatch)
-      return res.status(401).json({ error: "Invalid password" });
+    if (!isMatch) return res.status(401).json({ error: "Invalid password" });
 
     const token = jwt.sign(
       { id: team._id, teamId: team.teamId, role: "team" },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.json({
@@ -45,15 +45,13 @@ router.get("/me", async (req, res) => {
   try {
     const token = req.headers.authorization;
 
-    if (!token)
-      return res.status(401).json({ error: "No token provided" });
+    if (!token) return res.status(401).json({ error: "No token provided" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const team = await Registration.findById(decoded.id).select("-password");
 
-    if (!team)
-      return res.status(404).json({ error: "Team not found" });
+    if (!team) return res.status(404).json({ error: "Team not found" });
 
     res.json(team);
   } catch (err) {
@@ -66,11 +64,9 @@ router.put("/me", async (req, res) => {
     const token = req.headers.authorization;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const updated = await Registration.findByIdAndUpdate(
-      decoded.id,
-      req.body,
-      { new: true }
-    ).select("-password");
+    const updated = await Registration.findByIdAndUpdate(decoded.id, req.body, {
+      new: true,
+    }).select("-password");
 
     res.json(updated);
   } catch (err) {
@@ -107,22 +103,76 @@ router.get("/:id", async (req, res) => {
 //
 router.post("/", async (req, res) => {
   try {
-    const lastTeam = await Registration.findOne().sort({ teamId: -1 });
-    const newTeamId = lastTeam ? lastTeam.teamId + 1 : 1;
+    const {
+      teamName,
+      teamLead,
+      teamLeadEmail,
+      phone,
+      email,
+      password,
+      university,
+      yearCourse,
+      member1,
+      member2,
+      selectedTheme,
+      ideaDescription,
+    } = req.body;
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    if (!teamName || !teamLead || !teamLeadEmail || !email || !password) {
+      return res.status(400).json({
+        error: "Required fields missing",
+      });
+    }
 
-    const newRegistration = new Registration({
-      ...req.body,
-      password: hashedPassword,
-      teamId: newTeamId,
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // generate unique team code
+    let teamCode;
+    let exists = true;
+
+    while (exists) {
+      teamCode =
+        "TEAM-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      const existing = await Registration.findOne({ teamId: teamCode });
+      if (!existing) exists = false;
+    }
+
+    const registration = new Registration({
+      teamId: teamCode,
+      teamName,
+      teamLead,
+      teamLeadEmail,
+      phone,
+      email,
+      password: hashedPassword, // important
+      university,
+      yearCourse,
+      member1,
+      member2,
+      selectedTheme,
+      ideaDescription,
     });
 
-    await newRegistration.save();
+    await registration.save();
 
-    res.status(201).json(newRegistration);
+    // send email
+    try {
+      await sendTeamCode(teamLeadEmail, teamCode);
+      console.log("Email sent successfully");
+    } catch (err) {
+      console.log("Email failed", err);
+    }
+
+    res.status(201).json({
+      message: "Registration successful",
+      teamId: teamCode,
+      data: registration,
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: "Registration failed" });
   }
 });
 
@@ -134,7 +184,7 @@ router.put("/:id", async (req, res) => {
     const updated = await Registration.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true },
     );
 
     res.json(updated);

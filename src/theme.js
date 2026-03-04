@@ -29,7 +29,7 @@
 //           boxShadow: "0 0 20px #ff0080",
 //         },
 //         containedPrimary: {
-//           boxShadow: "0 0 20px #00ffa3",
+//           boxShadow: (theme) => `0 0 20px ${theme.palette.primary.main}`,
 //         },
 //       },
 //     },
@@ -89,20 +89,35 @@ import { createTheme } from "@mui/material/styles";
 const baseComponents = {
   MuiCard: {
     styleOverrides: {
-      root: {
+      root: ({ theme }) => ({
         backdropFilter: "blur(20px)",
         borderRadius: "16px",
-      },
+
+        background: theme.palette.background.paper,
+
+        border: `1px solid ${theme.palette.divider}`,
+
+        boxShadow: `0 0 20px ${theme.palette.primary.main}33`,
+
+        transition: "all 0.3s ease",
+
+        "&:hover": {
+          boxShadow: `0 0 35px ${theme.palette.primary.main}66`,
+          transform: "translateY(-4px)",
+        },
+      }),
     },
   },
+
   MuiButton: {
     styleOverrides: {
-      containedSecondary: {
-        boxShadow: "0 0 20px currentColor",
-      },
-      containedPrimary: {
-        boxShadow: "0 0 20px currentColor",
-      },
+      containedPrimary: ({ theme }) => ({
+        boxShadow: `0 0 20px ${theme.palette.primary.main}`,
+      }),
+
+      containedSecondary: ({ theme }) => ({
+        boxShadow: `0 0 20px ${theme.palette.secondary.main}`,
+      }),
     },
   },
 };
@@ -126,10 +141,10 @@ export const darkNeon = createTheme({
 export const lightTheme = createTheme({
   palette: {
     mode: "light",
-    primary: { main: "#0077ff" },
-    secondary: { main: "#ff6b00" },
+    primary: { main: "#1976d2" },
+    secondary: { main: "#1565c0" },
     background: {
-      default: "#f5f7fb",
+      default: "#f4f7ff",
       paper: "#ffffff",
     },
   },
