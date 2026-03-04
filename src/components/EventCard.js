@@ -1,53 +1,129 @@
-import { Card, CardMedia, CardContent, Typography } from "@mui/material";
+import { Grid, Box, Paper, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { useTheme } from "@mui/material/styles";
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, index }) {
+  const theme = useTheme();
+
+  const isReverse = index % 2 === 1;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+      initial={{ opacity: 0, x: isReverse ? 100 : -100 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.7 }}
       viewport={{ once: true }}
-      whileHover={{ scale: 1.05 }}
     >
-      <Card
-        sx={{
-          maxWidth: 320,
-          background: "rgba(255,255,255,0.05)",
-          backdropFilter: "blur(20px)",
-          borderRadius: "16px",
-          transition: "0.4s",
-          transform: "rotate(1deg)",
-          "&:hover": {
-            boxShadow: "0 0 30px rgba(255,0,128,0.6)",
-            transform: "rotate(0deg)",
-          },
-        }}
+      <Grid
+        container
+        spacing={6}
+        alignItems="center"
+        direction={isReverse ? "row-reverse" : "row"}
+        sx={{ mb: 10 }}
       >
-        <CardMedia
-          component="img"
-          image={event.img}
-          sx={{ height: 200 }}
-        />
+        {/* IMAGE */}
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
+          <Box
+            sx={{
+              p: 2,
+              background: theme.palette.background.paper,
 
-        <CardContent>
-          <Typography variant="h6" fontWeight="bold">
-            {event.title}
-          </Typography>
+              border: `1px solid ${theme.palette.primary.main}`,
 
-          <Typography
-            variant="body2"
-            color="secondary"
-            sx={{ mb: 1 }}
+              borderRadius: 3,
+
+              backdropFilter: "blur(8px)",
+
+              boxShadow: `0 0 15px ${theme.palette.primary.main}40`,
+
+              maxWidth: 380,
+              width: "100%",
+
+              display: "flex",
+              justifyContent: "center",
+
+              transition: "0.3s",
+
+              "&:hover": {
+                boxShadow: `0 0 35px ${theme.palette.primary.main}66`,
+                transform: "translateY(-4px)",
+              },
+            }}
           >
-            {event.date}
-          </Typography>
+            <Box
+              component="img"
+              src={event.img}
+              alt={event.title}
+              sx={{
+                width: "100%",
+                height: 220,
+                objectFit: "cover",
+                borderRadius: 2,
+              }}
+            />
+          </Box>
+        </Grid>
 
-          <Typography variant="body2" color="gray">
-            {event.desc}
-          </Typography>
-        </CardContent>
-      </Card>
+        {/* CONTENT */}
+        <Grid item xs={12} md={6}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              background: theme.palette.background.paper,
+
+              border: `1px solid ${theme.palette.primary.main}`,
+
+              borderRadius: 3,
+
+              backdropFilter: "blur(8px)",
+
+              boxShadow: `0 0 20px ${theme.palette.primary.main}30`,
+
+              transition: "0.3s",
+
+              "&:hover": {
+                boxShadow: `0 0 35px ${theme.palette.primary.main}66`,
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{
+                color: theme.palette.primary.main,
+              }}
+            >
+              {event.title}
+            </Typography>
+
+            <Typography
+              sx={{
+                color: theme.palette.secondary.main,
+                mb: 2,
+                fontSize: "0.95rem",
+              }}
+            >
+              {event.date}
+            </Typography>
+
+            <Typography
+              sx={{
+                lineHeight: 1.7,
+                color: theme.palette.text.primary,
+              }}
+            >
+              {event.desc}
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
     </motion.div>
   );
 }

@@ -1,7 +1,10 @@
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { useTheme } from "@mui/material/styles";
 
-export default function ThemeCard({ theme, onClick }) {
+export default function ThemeCard({ theme: themeItem, onClick }) {
+  const theme = useTheme();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -11,34 +14,51 @@ export default function ThemeCard({ theme, onClick }) {
       whileHover={{ scale: 1.05 }}
     >
       <Card
-        onClick={() => onClick && onClick(theme)}
+        onClick={() => onClick && onClick(themeItem)}
         sx={{
           maxWidth: 320,
           cursor: "pointer",
-          background: "rgba(255,255,255,0.05)",
+
+          background: theme.palette.background.paper,
+
+          border: `1px solid ${theme.palette.primary.main}`,
+
           backdropFilter: "blur(20px)",
+
           borderRadius: "16px",
+
           transition: "0.4s",
+
           transform: "rotate(-1deg)",
+
+          boxShadow: `0 0 15px ${theme.palette.primary.main}33`,
+
           "&:hover": {
-            boxShadow: "0 0 30px rgba(0,255,163,0.6)",
-            transform: "rotate(0deg)",
+            boxShadow: `0 0 35px ${theme.palette.primary.main}66`,
+            transform: "rotate(0deg) translateY(-4px)",
           },
         }}
       >
         <CardMedia
           component="img"
-          image={theme.img}
+          image={themeItem.img}
           sx={{ height: 200 }}
         />
 
         <CardContent>
-          <Typography variant="h6" fontWeight="bold">
-            {theme.title}
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{ color: theme.palette.primary.main }}
+          >
+            {themeItem.title}
           </Typography>
 
-          <Typography variant="body2" color="gray">
-            {theme.desc.substring(0, 60)}...
+          <Typography
+            variant="body2"
+            sx={{ color: theme.palette.text.secondary }}
+          >
+            {themeItem.desc.substring(0, 60)}...
           </Typography>
         </CardContent>
       </Card>

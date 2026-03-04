@@ -130,8 +130,8 @@ export default function RegistrationForm() {
           width: "100%",
           p: 4,
           borderRadius: 3,
-          background: "#111",
-          border: "1px solid rgba(255,255,255,0.1)",
+          background: (theme) => theme.palette.background.paper,
+          border: (theme) => `1px solid ${theme.palette.divider}`
         }}
       >
         <Typography variant="h6" align="center" sx={{ mb: 3 }}>
