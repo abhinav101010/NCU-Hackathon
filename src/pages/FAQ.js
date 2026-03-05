@@ -6,18 +6,20 @@ import {
   AccordionDetails,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useTheme } from "@emotion/react";
 
 export default function FAQ() {
+  const theme = useTheme();
   return (
     <Container maxWidth="md" sx={{ mt: 10, mb: 10 }}>
       {/* Page Title */}
       <Typography
         variant="h3"
+        textAlign="center"
         sx={{
-          textAlign: "center",
-          fontWeight: "bold",
           mb: 6,
-          color: "#00ffa3",
+          fontWeight: "bold",
+          color: theme.palette.primary.main,
         }}
       >
         Frequently Asked Questions

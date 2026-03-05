@@ -1,16 +1,18 @@
 import { Container, Typography, Box, Grid } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export default function AboutPage() {
+  const theme = useTheme();
   return (
     <Container maxWidth="md" sx={{ mt: 10, mb: 10 }}>
       {/* Page Title */}
       <Typography
         variant="h3"
+        textAlign="center"
         sx={{
+          mb: 6,
           fontWeight: "bold",
-          textAlign: "center",
-          mb: 4,
-          color: "#00ffa3",
+          color: theme.palette.primary.main,
         }}
       >
         About NCU Hackathon

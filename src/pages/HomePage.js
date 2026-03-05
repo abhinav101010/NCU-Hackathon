@@ -1,4 +1,4 @@
-import { Container, Typography, Box, Button } from "@mui/material";
+import { Container, Typography, Box, Button, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Countdown from "../components/Countdown";
@@ -23,6 +23,7 @@ export default function HomePage() {
   const [wordIndex, setWordIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     const currentWord = words[wordIndex];
@@ -70,7 +71,7 @@ export default function HomePage() {
             mb: 2,
             letterSpacing: 4,
             fontWeight: "bold",
-            color: "#00ffa3",
+            color: theme.palette.primary.main,
           }}
         >
           NCU HACKATHON 2026
@@ -111,7 +112,7 @@ export default function HomePage() {
         <Typography
           variant="body1"
           sx={{
-            color: "#00ffa3",
+            color: theme.palette.primary.main,
             mb: 2,
             fontWeight: "bold",
           }}
@@ -150,8 +151,8 @@ export default function HomePage() {
             variant="outlined"
             onClick={() => navigate("/themes")}
             sx={{
-              borderColor: "#00ffa3",
-              color: "#00ffa3",
+              borderColor: theme.palette.primary.main,
+              color: theme.palette.primary.main,
               fontWeight: "bold",
               padding: "10px 28px",
             }}

@@ -71,6 +71,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ```
 hackathon
+├─ .env
 ├─ README.md
 ├─ package-lock.json
 ├─ package.json
@@ -110,6 +111,7 @@ hackathon
    │  ├─ HomePage.js
    │  ├─ RegisterPage.js
    │  ├─ RulePage.js
+   │  ├─ SponsorsPage.js
    │  ├─ ThemePage.js
    │  └─ matrix
    │     ├─ AdminPage.js
@@ -121,7 +123,8 @@ hackathon
    │  ├─ .env
    │  ├─ createAdmin.js
    │  ├─ middleware
-   │  │  └─ authTeam.js
+   │  │  ├─ authTeam.js
+   │  │  └─ upload.js
    │  ├─ models
    │  │  ├─ Admin.js
    │  │  ├─ Event.js
@@ -140,8 +143,23 @@ hackathon
    │  │  ├─ sponsorsRoutes.js
    │  │  └─ themesRoutes.js
    │  ├─ seed.js
-   │  └─ server.js
+   │  ├─ server.js
+   │  ├─ testMail.js
+   │  ├─ uploads
+   │  │  ├─ events
+   │  │  │  ├─ 1772636189762-photo-1511578314322-379afb476865.jpeg
+   │  │  │  └─ 1772687185071-photo-1511578314322-379afb476865.jpeg
+   │  │  ├─ sponsors
+   │  │  │  ├─ 1772636318638-photo-1511578314322-379afb476865.jpeg
+   │  │  │  └─ 1772687195820-photo-1511578314322-379afb476865.jpeg
+   │  │  └─ themes
+   │  │     ├─ 1772635217950-photo-1511578314322-379afb476865.jpeg
+   │  │     └─ 1772687162760-photo-1511578314322-379afb476865.jpeg
+   │  └─ utils
+   │     └─ sendMail.js
    ├─ setupTests.js
-   └─ theme.js
+   ├─ theme.js
+   └─ utils
+      └─ api.js
 
 ```

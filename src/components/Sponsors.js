@@ -1,15 +1,46 @@
-import { Container, Box } from "@mui/material";
+import { Container, Box, CircularProgress } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
-import sponsors from "../data-static/sponsors";
+import { useEffect, useState } from "react";
+import { API } from "../utils/api";
 
 export default function Sponsors() {
+
   const theme = useTheme();
+
+  const [sponsors, setSponsors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  /* ---------------- LOAD SPONSORS ---------------- */
+
+  useEffect(() => {
+
+    fetch(`${API}/api/sponsors`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSponsors(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Sponsors fetch error:", err);
+        setLoading(false);
+      });
+
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   const sponsorsLoop = [...sponsors, ...sponsors];
 
   return (
     <>
+
       <Box
         sx={{
           position: "relative",
@@ -17,7 +48,7 @@ export default function Sponsors() {
 
           background: theme.palette.background.paper,
 
-          border: `1px solid ${theme.palette.primary.main}40`,
+          // border: `1px solid ${theme.palette.primary.main}40`,
 
           backdropFilter: "blur(12px)",
 
@@ -26,7 +57,9 @@ export default function Sponsors() {
           boxShadow: `0 0 30px ${theme.palette.primary.main}20`,
         }}
       >
+
         {/* Sliding Row */}
+
         <motion.div
           animate={{ x: ["0%", "-50%"] }}
           transition={{
@@ -40,9 +73,11 @@ export default function Sponsors() {
             width: "max-content",
           }}
         >
+
           {sponsorsLoop.map((sponsor, index) => (
+
             <Box
-              key={index}
+              key={sponsor._id || index}
               sx={{
                 background:
                   theme.palette.mode === "light"
@@ -73,22 +108,29 @@ export default function Sponsors() {
                 },
               }}
             >
+
               <Box
                 component="img"
-                src={sponsor?.img}
+                src={`${API}${sponsor?.img}`}
                 alt={sponsor?.name}
                 sx={{
                   height: 60,
                   objectFit: "contain",
                   filter:
-                    theme.palette.mode === "light" ? "none" : "brightness(1.1)",
+                    theme.palette.mode === "light"
+                      ? "none"
+                      : "brightness(1.1)",
                 }}
               />
+
             </Box>
+
           ))}
+
         </motion.div>
 
-        {/* Edge Fade Effect */}
+        {/* Left Fade */}
+
         <Box
           sx={{
             position: "absolute",
@@ -103,6 +145,8 @@ export default function Sponsors() {
           }}
         />
 
+        {/* Right Fade */}
+
         <Box
           sx={{
             position: "absolute",
@@ -116,7 +160,9 @@ export default function Sponsors() {
                 : "linear-gradient(to left,#0a0a0a,transparent)",
           }}
         />
+
       </Box>
+
     </>
   );
 }
