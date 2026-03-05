@@ -117,7 +117,7 @@ export default function HomePage() {
             fontWeight: "bold",
           }}
         >
-          48 Hour Hackathon • ₹1L+ Prize Pool • 500+ Hackers
+          48 Hour Hackathon • ₹50k+ Prize Pool • 500+ Hackers
         </Typography>
 
         {/* Subtitle */}

@@ -22,10 +22,10 @@ export default function RegistrationForm() {
   const [step, setStep] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedThemeObj, setSelectedThemeObj] = useState(null);
-
+  const [submitting, setSubmitting] = useState(false);
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     teamName: "",
     teamLead: "",
@@ -58,48 +58,83 @@ export default function RegistrationForm() {
       });
   }, []);
 
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    return /^[6-9]\d{9}$/.test(phone);
+  };
+
+  const validateName = (name) => {
+    return /^[a-zA-Z\s]{2,40}$/.test(name);
+  };
+
+  const validatePassword = (password) => {
+    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password);
+  };
+
   /* ---------------- STEP 1 ---------------- */
 
   const handleNextStep1 = () => {
-    const { teamName, teamLead, teamLeadEmail, phone, university, yearCourse } =
-      formData;
+    const newErrors = {};
 
-    if (
-      !teamName ||
-      !teamLead ||
-      !teamLeadEmail ||
-      !phone ||
-      !university ||
-      !yearCourse
-    ) {
-      toast.error("Please fill all required fields");
-      return;
+    if (!validateName(formData.teamName))
+      newErrors.teamName = "Enter a valid team name";
+
+    if (!validateName(formData.teamLead))
+      newErrors.teamLead = "Enter a valid name";
+
+    if (!validateEmail(formData.teamLeadEmail))
+      newErrors.teamLeadEmail = "Invalid email";
+
+    if (!validatePhone(formData.phone))
+      newErrors.phone = "Enter valid 10 digit phone";
+
+    if (!formData.university) newErrors.university = "University required";
+
+    if (formData.university.length < 3) newErrors.university = "No Short Forms";
+
+    if (!formData.yearCourse) newErrors.yearCourse = "Year/Course required";
+
+    setErrors(newErrors);
+    console.log(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setStep(2);
+    } else {
+      toast.error("Fix the errors before continuing");
     }
-
-    setStep(2);
   };
 
   /* ---------------- STEP 2 ---------------- */
 
   const handleNextStep2 = () => {
-    const { member1, member2, email, password } = formData;
+    const newErrors = {};
 
-    if (!member1 || !member2) {
-      toast.error("Team size must be exactly 3 members");
-      return;
+    if (!validateName(formData.member1)) newErrors.member1 = "Enter valid name";
+
+    if (!validateName(formData.member2)) newErrors.member2 = "Enter valid name";
+
+    // if (!validateEmail(formData.email)) newErrors.email = "Invalid email";
+
+    if (formData.member1 === formData.member2)
+      newErrors.member2 = "Members must be different";
+
+    if (!formData.password || formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+
+    if (!validatePassword(formData.password))
+      newErrors.password = "Password must contain letters and numbers";
+
+    setErrors(newErrors);
+    console.log(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setStep(3);
+    } else {
+      toast.error("Fix the errors before continuing");
     }
-
-    if (!email || !password) {
-      toast.error("Email and Password are required");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-
-    setStep(3);
   };
 
   /* ---------------- SUBMIT ---------------- */
@@ -114,6 +149,8 @@ export default function RegistrationForm() {
       toast.error("Please describe your idea");
       return;
     }
+
+    setSubmitting(true); // start loader
 
     try {
       const response = await fetch(`${API}/api/registrations`, {
@@ -159,6 +196,16 @@ export default function RegistrationForm() {
       console.error("Registration error:", error);
       toast.error("Server error");
     }
+
+    setSubmitting(false); // stop loader
+  };
+
+  const updateField = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: "" });
+    }
   };
 
   return (
@@ -195,28 +242,41 @@ export default function RegistrationForm() {
               <TextField
                 fullWidth
                 label="Name of Team"
+                required
                 margin="normal"
                 value={formData.teamName}
-                onChange={(e) =>
-                  setFormData({ ...formData, teamName: e.target.value })
-                }
+                error={!!errors.teamName}
+                helperText={errors.teamName}
+                onChange={(e) => {
+                  setFormData({ ...formData, teamName: e.target.value });
+                  updateField("teamName", e.target.value);
+                }}
               />
 
               <TextField
                 fullWidth
                 label="Team Lead Name"
+                required
                 margin="normal"
                 value={formData.teamLead}
+                error={!!errors.teamLead}
+                helperText={errors.teamLead}
                 onChange={(e) =>
-                  setFormData({ ...formData, teamLead: e.target.value })
+                  setFormData({
+                    ...formData,
+                    teamLead: e.target.value.replace(/[^a-zA-Z\s]/g, ""),
+                  })
                 }
               />
 
               <TextField
                 fullWidth
                 label="Team Lead Email"
+                required
                 margin="normal"
                 value={formData.teamLeadEmail}
+                error={!!errors.teamLeadEmail}
+                helperText={errors.teamLeadEmail}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -229,8 +289,11 @@ export default function RegistrationForm() {
                 fullWidth
                 label="Phone Number"
                 margin="normal"
+                required
                 inputProps={{ inputMode: "numeric", maxLength: 10 }}
                 value={formData.phone}
+                error={!!errors.phone}
+                helperText={errors.phone}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -241,9 +304,12 @@ export default function RegistrationForm() {
 
               <TextField
                 fullWidth
-                label="University"
+                label="University (Full Form)"
+                required
                 margin="normal"
                 value={formData.university}
+                error={!!errors.university}
+                helperText={errors.university}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -255,8 +321,11 @@ export default function RegistrationForm() {
               <TextField
                 fullWidth
                 label="Year & Course"
+                required
                 margin="normal"
                 value={formData.yearCourse}
+                error={!!errors.yearCourse}
+                helperText={errors.yearCourse}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -286,20 +355,32 @@ export default function RegistrationForm() {
               <TextField
                 fullWidth
                 label="Team Mate 1 Name"
+                required
                 margin="normal"
                 value={formData.member1}
+                error={!!errors.member1}
+                helperText={errors.member1}
                 onChange={(e) =>
-                  setFormData({ ...formData, member1: e.target.value })
+                  setFormData({
+                    ...formData,
+                    member1: e.target.value.replace(/[^a-zA-Z\s]/g, ""),
+                  })
                 }
               />
 
               <TextField
                 fullWidth
                 label="Team Mate 2 Name"
+                required
                 margin="normal"
                 value={formData.member2}
+                error={!!errors.member2}
+                helperText={errors.member2}
                 onChange={(e) =>
-                  setFormData({ ...formData, member2: e.target.value })
+                  setFormData({
+                    ...formData,
+                    member2: e.target.value.replace(/[^a-zA-Z\s]/g, ""),
+                  })
                 }
               />
 
@@ -307,8 +388,11 @@ export default function RegistrationForm() {
                 fullWidth
                 label="Team Login Username"
                 margin="normal"
+                required
                 type="email"
                 value={formData.email}
+                error={!!errors.email}
+                helperText={errors.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
@@ -318,8 +402,11 @@ export default function RegistrationForm() {
                 fullWidth
                 label="Password"
                 margin="normal"
+                required
                 type="password"
                 value={formData.password}
+                error={!!errors.password}
+                helperText={errors.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
@@ -384,7 +471,10 @@ export default function RegistrationForm() {
                 rows={4}
                 label="Describe Your Project Idea"
                 margin="normal"
+                required
+                inputProps={{ maxLength: 1000 }}
                 value={formData.ideaDescription}
+                helperText={`${formData.ideaDescription.length}/1000`}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -403,8 +493,9 @@ export default function RegistrationForm() {
                   variant="contained"
                   color="secondary"
                   onClick={handleSubmit}
+                  disabled={submitting}
                 >
-                  Submit
+                  {submitting ? <CircularProgress size={24} color="inherit" /> : "Submit"}
                 </Button>
               </Box>
             </>
