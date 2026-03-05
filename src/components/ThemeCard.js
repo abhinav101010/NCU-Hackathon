@@ -1,6 +1,7 @@
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
+import { API } from "../utils/api";
 
 export default function ThemeCard({ theme: themeItem, onClick }) {
   const theme = useTheme();
@@ -40,7 +41,7 @@ export default function ThemeCard({ theme: themeItem, onClick }) {
       >
         <CardMedia
           component="img"
-          image={themeItem?.img}
+          image={`${API}${themeItem?.img}`}
           alt={themeItem?.title}
           sx={{
             height: 200,

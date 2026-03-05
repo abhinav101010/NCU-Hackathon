@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Grid, Typography, Box, Paper } from "@mui/material";
 import SectionHeading from "../components/SectionHeading";
 import Sponsors from "../components/Sponsors";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import events from "../data-static/events";
+import { API } from "../utils/api";
 
 export default function EventPage() {
   const location = useLocation();
   const isEvents = location.pathname.startsWith("/events");
+
+  const [events, setEvents] = useState([]);
+
+  // LOAD EVENTS FROM API
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        const res = await fetch(`${API}/api/events`);
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        console.error("Failed to load events", err);
+      }
+    };
+
+    loadEvents();
+  }, []);
 
   return (
     <>
@@ -21,7 +38,7 @@ export default function EventPage() {
 
             return (
               <motion.div
-                key={event.id || i}
+                key={event._id || i}
                 initial={{ opacity: 0, x: isReverse ? 100 : -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7 }}
@@ -56,7 +73,7 @@ export default function EventPage() {
                     >
                       <Box
                         component="img"
-                        src={event.img}
+                        src={`${API}${event.img}`}
                         alt={event.title}
                         sx={{
                           width: "100%",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -11,39 +11,68 @@ import {
   Box,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import SectionHeading from "../components/SectionHeading";
-import themes from "../data-static/themes";
-import ThemeCard from "../components/ThemeCard";
-import Sponsors from "../components/Sponsors";
 import { useLocation } from "react-router-dom";
 
+import SectionHeading from "../components/SectionHeading";
+import ThemeCard from "../components/ThemeCard";
+import Sponsors from "../components/Sponsors";
+
+import { API } from "../utils/api";
+
 export default function ThemePage() {
+  const muiTheme = useTheme();
+  const location = useLocation();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(null);
+  const [themes, setThemes] = useState([]);
 
-  const theme = useTheme();
+  const isThemesPage = location.pathname.startsWith("/themes");
 
-  const location = useLocation();
-  const isThemes = location.pathname.startsWith("/themes");
+  // LOAD THEMES FROM API
+  useEffect(() => {
+    const loadThemes = async () => {
+      try {
+        const res = await fetch(`${API}/api/themes`);
+        const data = await res.json();
+        setThemes(data);
+      } catch (err) {
+        console.error("Failed to load themes", err);
+      }
+    };
+
+    loadThemes();
+  }, []);
 
   const handleOpen = (themeItem) => {
     setSelectedTheme(themeItem);
     setDialogOpen(true);
   };
 
+  const handleClose = () => {
+    setDialogOpen(false);
+    setSelectedTheme(null);
+  };
+
   return (
     <>
+      {/* THEMES SECTION */}
       <Container sx={{ py: 12 }}>
         <SectionHeading>Themes</SectionHeading>
 
-        <Grid container spacing={4} justifyContent="center" alignItems="center">
-          {themes.map((themeItem, i) => (
+        <Grid
+          container
+          spacing={4}
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          {themes.map((themeItem, index) => (
             <Grid
               item
               xs={12}
               sm={6}
               md={4}
-              key={i}
+              key={themeItem._id || index}
               sx={{
                 display: "flex",
                 justifyContent: "center",
@@ -55,18 +84,18 @@ export default function ThemePage() {
         </Grid>
       </Container>
 
-      {/* THEME DIALOG */}
+      {/* THEME DETAILS DIALOG */}
       <Dialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={handleClose}
         maxWidth="sm"
         fullWidth
         PaperProps={{
           sx: {
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.primary.main}`,
+            backgroundColor: muiTheme.palette.background.paper,
+            border: `1px solid ${muiTheme.palette.primary.main}`,
             borderRadius: 3,
-            boxShadow: `0 0 25px ${theme.palette.primary.main}40`,
+            boxShadow: `0 0 25px ${muiTheme.palette.primary.main}40`,
           },
         }}
       >
@@ -74,9 +103,9 @@ export default function ThemePage() {
           <>
             <DialogTitle
               sx={{
-                borderBottom: `1px solid ${theme.palette.divider}`,
-                fontWeight: "bold",
-                color: theme.palette.primary.main,
+                borderBottom: `1px solid ${muiTheme.palette.divider}`,
+                fontWeight: 700,
+                color: muiTheme.palette.primary.main,
               }}
             >
               {selectedTheme.title}
@@ -85,18 +114,21 @@ export default function ThemePage() {
             <DialogContent sx={{ mt: 2 }}>
               <Box
                 component="img"
-                src={selectedTheme.img}
+                src={`${API}${selectedTheme.img}`}
+                alt={selectedTheme.title}
                 sx={{
                   width: "100%",
                   borderRadius: 2,
                   mb: 2,
+                  objectFit: "cover",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: theme.palette.text.primary,
+                  color: muiTheme.palette.text.primary,
                   lineHeight: 1.7,
+                  fontSize: "0.95rem",
                 }}
               >
                 {selectedTheme.desc}
@@ -104,11 +136,7 @@ export default function ThemePage() {
             </DialogContent>
 
             <DialogActions sx={{ p: 2 }}>
-              <Button
-                onClick={() => setDialogOpen(false)}
-                variant="contained"
-                color="primary"
-              >
+              <Button onClick={handleClose} variant="contained">
                 Close
               </Button>
             </DialogActions>
@@ -116,7 +144,8 @@ export default function ThemePage() {
         )}
       </Dialog>
 
-      {isThemes && <Sponsors />}
+      {/* SPONSORS SECTION */}
+      {isThemesPage && <Sponsors />}
     </>
   );
 }
