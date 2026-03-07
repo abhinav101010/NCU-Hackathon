@@ -30,7 +30,7 @@ function App() {
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   const [themeName, setThemeName] = useState(
-    localStorage.getItem("theme") || "dark",
+    localStorage.getItem("theme") || "light",
   );
 
   const themes = {

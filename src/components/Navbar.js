@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import logo from "../utils/logo.png"
+import logo from "../utils/logo.svg"
 
 export default function Navbar({ themeName, setThemeName }) {
   const theme = useTheme();
@@ -69,8 +69,8 @@ export default function Navbar({ themeName, setThemeName }) {
             },
           }}
         >
-          <MenuItem value="dark">Dark Neon</MenuItem>
           <MenuItem value="light">Light</MenuItem>
+          <MenuItem value="dark">Dark Neon</MenuItem>
           <MenuItem value="student">Student</MenuItem>
         </Select>
 

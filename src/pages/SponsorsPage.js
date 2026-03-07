@@ -1,22 +1,35 @@
-import { Container, Typography, Box, Grid, Button, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  Grid,
+  Button,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import { API } from "../utils/api.js";
 
 export default function SponsorsPage() {
   const theme = useTheme();
+  const [selectedTier, setSelectedTier] = useState(null);
+  const [sponsors, setSponsors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const sponsors = [
+  const sponsorsTier = [
     { title: "Silver Sponsor", tier: "silver" },
     { title: "Gold Sponsor", tier: "gold" },
     { title: "Platinum Sponsor", tier: "platinum" },
-    { title: "Co-Title Sponsor", tier: "co" },
+    { title: "Co-Title Sponsor", tier: "co-title" },
     { title: "Title Sponsor", tier: "title" },
   ];
 
   const contacts = [
     {
-      name: "Aayush",
+      name: "Aayush Yadav",
       role: "Sponsorship",
       phone: "919306101432",
     },
@@ -24,6 +37,28 @@ export default function SponsorsPage() {
 
   const message =
     "Hi, I'm interested in sponsoring the INNOVATHON. Could you please share more details?";
+
+  const filteredSponsors = selectedTier
+    ? sponsors.filter(
+        (sponsor) =>
+          sponsor?.tier?.toLowerCase() === selectedTier?.toLowerCase(),
+      )
+    : sponsors;
+
+  useEffect(() => {
+    fetch(`${API}/api/sponsors`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSponsors(data);
+        console.log(data);
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Sponsors fetch error:", err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}>
@@ -85,7 +120,7 @@ export default function SponsorsPage() {
             pb: 2,
           }}
         >
-          {sponsors.map((sponsor, index) => {
+          {sponsorsTier.map((sponsor, index) => {
             let scale = 1;
             let glow = `0 0 15px ${theme.palette.primary.main}40`;
 
@@ -98,6 +133,8 @@ export default function SponsorsPage() {
               scale = 1.35;
             }
 
+            const isSelected = selectedTier === sponsor.tier;
+
             return (
               <Grid item key={index}>
                 <motion.div
@@ -107,16 +144,28 @@ export default function SponsorsPage() {
                   viewport={{ once: true }}
                 >
                   <Box
+                    onClick={() => setSelectedTier(sponsor.tier)}
                     sx={{
                       width: 230,
                       height: 180,
                       textAlign: "center",
                       p: 3,
                       borderRadius: 3,
+                      cursor: "pointer",
                       background: theme.palette.background.paper,
-                      border: `1px solid ${theme.palette.primary.main}40`,
-                      boxShadow: glow,
-                      transform: `scale(${scale})`,
+
+                      border: isSelected
+                        ? `2px solid ${theme.palette.primary.main}`
+                        : `1px solid ${theme.palette.primary.main}40`,
+
+                      boxShadow: isSelected
+                        ? `0 0 80px ${theme.palette.primary.main}`
+                        : glow,
+
+                      transform: isSelected
+                        ? `scale(${scale + 0.15})`
+                        : `scale(${scale})`,
+
                       transition: "0.35s",
                       backdropFilter: "blur(10px)",
 
@@ -151,12 +200,88 @@ export default function SponsorsPage() {
                     >
                       {sponsor.title}
                     </Typography>
+
+                    {/* {isSelected && (
+                      <Typography
+                        sx={{
+                          mt: 1,
+                          fontSize: 12,
+                          color: theme.palette.primary.main,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Selected
+                      </Typography>
+                    )} */}
                   </Box>
                 </motion.div>
               </Grid>
             );
           })}
         </Grid>
+      </Box>
+
+      {/* List */}
+      <Box sx={{ mt: 10 }}>
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: "center",
+            mb: 6,
+            fontWeight: "bold",
+            color: theme.palette.primary.main,
+          }}
+        >
+          {(selectedTier ? selectedTier : "All").toUpperCase()} Sponsors
+        </Typography>
+
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Grid container spacing={4} justifyContent="center">
+            {filteredSponsors.map((sponsor) => (
+              <Grid item key={sponsor._id}>
+                <motion.div whileHover={{ scale: 1.08 }}>
+                  <Box
+                    sx={{
+                      background:
+                        theme.palette.mode === "light"
+                          ? "#ffffff"
+                          : "rgba(255,255,255,0.06)",
+
+                      border: `1px solid ${theme.palette.primary.main}35`,
+                      borderRadius: "14px",
+                      padding: "18px 32px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minWidth: "150px",
+                      backdropFilter: "blur(6px)",
+                      boxShadow: `0 0 10px ${theme.palette.primary.main}20`,
+
+                      "&:hover": {
+                        transform: "translateY(-6px) scale(1.05)",
+                        boxShadow: `0 0 25px ${theme.palette.primary.main}60`,
+                      },
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={`${API}${sponsor?.img}`}
+                      alt={sponsor?.name}
+                      sx={{
+                        height: 60,
+                        objectFit: "contain",
+                      }}
+                    />
+                  </Box>
+                </motion.div>
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Box>
 
       {/* Become Sponsor Section */}
@@ -242,7 +367,7 @@ export default function SponsorsPage() {
                   variant="contained"
                   startIcon={<WhatsAppIcon />}
                   href={`https://wa.me/${person.phone}?text=${encodeURIComponent(
-                    message
+                    message,
                   )}`}
                   target="_blank"
                   sx={{

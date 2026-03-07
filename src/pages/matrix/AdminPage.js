@@ -21,7 +21,7 @@ import {
   Toolbar,
   MenuItem,
 } from "@mui/material";
-
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -39,6 +39,35 @@ export default function AdminPage() {
   const currentName = names[tab];
 
   const tiers = ["Silver", "Gold", "Platinum", "Co-Title", "Title"];
+
+  const columns = [
+    { field: "teamId", headerName: "Team ID", width: 120 },
+    { field: "teamName", headerName: "Team Name", width: 180 },
+    { field: "selectedTheme", headerName: "Theme", width: 180 },
+    { field: "teamLead", headerName: "Team Lead", width: 160 },
+    { field: "teamLeadEmail", headerName: "Lead Email", width: 200 },
+    { field: "phone", headerName: "Phone", width: 140 },
+    { field: "university", headerName: "University", width: 180 },
+    { field: "yearCourse", headerName: "Year & Course", width: 160 },
+    { field: "member1", headerName: "Member 1", width: 160 },
+    { field: "member2", headerName: "Member 2", width: 160 },
+    { field: "email", headerName: "Login Email", width: 200 },
+    { field: "ideaDescription", headerName: "Idea", width: 300 },
+
+    {
+      field: "actions",
+      headerName: "Action",
+      width: 120,
+      renderCell: (params) => (
+        <IconButton
+          color="error"
+          onClick={() => deleteRegistration(params.row._id)}
+        >
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
+  ];
 
   // ================= LOAD =================
 
@@ -139,6 +168,52 @@ export default function AdminPage() {
     loadRegistrations();
   };
 
+  // ================= Download CSV ====================
+  const downloadCSV = () => {
+    if (!registrations.length) return;
+
+    const headers = [
+      "Team ID",
+      "Team Name",
+      "Theme",
+      "Team Lead",
+      "Lead Email",
+      "Phone",
+      "University",
+      "Year & Course",
+      "Member 1",
+      "Member 2",
+      "Login Email",
+      "Idea Description",
+    ];
+
+    const rows = registrations.map((r) => [
+      r.teamId,
+      r.teamName,
+      r.selectedTheme,
+      r.teamLead,
+      r.teamLeadEmail,
+      r.phone,
+      r.university,
+      r.yearCourse,
+      r.member1,
+      r.member2,
+      r.email,
+      r.ideaDescription,
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((v) => `"${v || ""}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "registrations.csv";
+    link.click();
+  };
+
   // ================= UI =================
 
   return (
@@ -178,6 +253,8 @@ export default function AdminPage() {
                     <TextField
                       label="Description"
                       fullWidth
+                      multiline
+                      rows={3}
                       value={form.desc || ""}
                       onChange={(e) =>
                         setForm({ ...form, desc: e.target.value })
@@ -344,49 +421,39 @@ export default function AdminPage() {
       {/* ================= REGISTRATION TABLE ================= */}
 
       {tab === 4 && (
-        <Paper sx={{ mt: 4 }}>
+        <Paper sx={{ mt: 4, height: 600 }}>
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Typography variant="h6">Registrations</Typography>
 
-            <Button startIcon={<RefreshIcon />} onClick={loadRegistrations}>
-              Refresh
-            </Button>
+            <Box>
+              <Button
+                startIcon={<RefreshIcon />}
+                onClick={loadRegistrations}
+                sx={{ mr: 2 }}
+              >
+                Refresh
+              </Button>
+
+              <Button variant="contained" onClick={downloadCSV}>
+                Download CSV
+              </Button>
+            </Box>
           </Toolbar>
 
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Team ID</TableCell>
-                  <TableCell>Team Name</TableCell>
-                  <TableCell>Theme</TableCell>
-                  <TableCell>Lead</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {registrations.map((row) => (
-                  <TableRow key={row._id}>
-                    <TableCell>{row.teamId}</TableCell>
-                    <TableCell>{row.teamName}</TableCell>
-                    <TableCell>{row.selectedTheme}</TableCell>
-                    <TableCell>{row.teamLead}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="error"
-                        onClick={() => deleteRegistration(row._id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <DataGrid
+            rows={registrations}
+            columns={columns}
+            getRowId={(row) => row._id}
+            pageSizeOptions={[10, 25, 50]}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10 } },
+            }}
+            disableRowSelectionOnClick
+            slots={{ toolbar: GridToolbar }}
+            sx={{
+              border: "none",
+            }}
+          />
         </Paper>
       )}
     </Container>
