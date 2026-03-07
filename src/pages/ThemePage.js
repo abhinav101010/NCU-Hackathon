@@ -17,7 +17,7 @@ import SectionHeading from "../components/SectionHeading";
 import ThemeCard from "../components/ThemeCard";
 import Sponsors from "../components/Sponsors";
 
-import { API } from "../utils/api";
+import { API } from "../utils/common";
 
 export default function ThemePage() {
   const muiTheme = useTheme();

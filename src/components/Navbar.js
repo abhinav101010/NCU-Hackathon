@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import logo from "../utils/logo.svg"
+import { calculateTimeLeft } from "../utils/common";
 
 export default function Navbar({ themeName, setThemeName }) {
   const theme = useTheme();
@@ -97,6 +98,7 @@ export default function Navbar({ themeName, setThemeName }) {
 
         {/* Register Button */}
         <Button
+          disabled={calculateTimeLeft().expired}
           component={Link}
           to="/register"
           variant="contained"

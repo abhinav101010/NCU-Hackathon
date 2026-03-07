@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Typography, Grid, Box, Button, Paper } from "@mui/material";
+import { Container, Typography, Grid, Button, Paper } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";

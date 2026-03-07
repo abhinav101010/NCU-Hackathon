@@ -7,7 +7,7 @@ import {
   Paper,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { API } from "../../utils/api";
+import { API } from "../../utils/common";
 
 export default function LoginPage() {
   const theme = useTheme();

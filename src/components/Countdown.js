@@ -1,46 +1,65 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { calculateTimeLeft } from "../utils/common";
 
 export default function Countdown() {
   const theme = useTheme();
-
-  const hackathonDate = new Date("2026-03-26T00:00:00");
-
-  const calculateTimeLeft = () => {
-    const diff = hackathonDate - new Date();
-
-    if (diff <= 0) {
-      return {
-        days: "00",
-        hours: "00",
-        minutes: "00",
-        seconds: "00",
-      };
-    }
-
-    return {
-      days: String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, "0"),
-      hours: String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(
-        2,
-        "0",
-      ),
-      minutes: String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, "0"),
-      seconds: String(Math.floor((diff / 1000) % 60)).padStart(2, "0"),
-    };
-  };
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      const time = calculateTimeLeft();
+      setTimeLeft(time);
+
+      if (time.expired) {
+        clearInterval(interval);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   const units = ["days", "hours", "minutes", "seconds"];
+
+  /* 🔴 SHOW THIS WHEN TIMER ENDS */
+  if (timeLeft.expired) {
+    return (
+      <Box
+        textAlign="center"
+        mt={8}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          background: `linear-gradient(135deg, ${theme.palette.primary.main}22, ${theme.palette.secondary.main}22)`,
+          border: `2px solid ${theme.palette.primary.main}`,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 900,
+            letterSpacing: 2,
+            color: theme.palette.primary.main,
+          }}
+        >
+          🚀 REGISTRATION CLOSED
+        </Typography>
+
+        <Typography
+          mt={2}
+          sx={{
+            fontSize: "1.4rem",
+            fontWeight: 600,
+            color: theme.palette.text.secondary,
+          }}
+        >
+          See you at the Innovathon!
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -53,7 +72,6 @@ export default function Countdown() {
     >
       {units.map((unit, index) => (
         <Box key={unit} display="flex" alignItems="center">
-          {/* Timer Box */}
           <Box
             sx={{
               minWidth: 90,
@@ -88,7 +106,6 @@ export default function Countdown() {
             </Typography>
           </Box>
 
-          {/* Colon */}
           {index !== units.length - 1 && (
             <Typography
               variant="h4"

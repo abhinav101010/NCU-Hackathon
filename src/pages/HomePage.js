@@ -7,6 +7,7 @@ import Sponsors from "../components/Sponsors";
 import EventPage from "./EventPage";
 import RulePage from "./RulePage";
 import { useNavigate } from "react-router-dom";
+import { calculateTimeLeft } from "../utils/common";
 
 const words = [
   "THE FUTURE",
@@ -19,7 +20,6 @@ const words = [
 
 export default function HomePage() {
   const navigate = useNavigate();
-
   const [wordIndex, setWordIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -136,6 +136,7 @@ export default function HomePage() {
         <Box sx={{ mb: 5 }}>
           <Button
             variant="contained"
+            disabled={calculateTimeLeft().expired}
             onClick={() => navigate("/register")}
             sx={{
               mr: 2,

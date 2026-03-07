@@ -13,7 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import SectionHeading from "../components/SectionHeading";
 import Sponsors from "../components/Sponsors";
 import { useLocation } from "react-router-dom";
-import { API } from "../utils/api";
+import { API } from "../utils/common";
 
 export default function RulePage() {
   const theme = useTheme();

@@ -11,13 +11,7 @@ import {
   CardContent,
   IconButton,
   Grid,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Paper,
-  TableContainer,
   Toolbar,
   MenuItem,
 } from "@mui/material";
@@ -25,7 +19,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { API } from "../../utils/api";
+import { API } from "../../utils/common";
 
 export default function AdminPage() {
   const [tab, setTab] = useState(0);
@@ -34,7 +28,6 @@ export default function AdminPage() {
   const [form, setForm] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [image, setImage] = useState(null);
-
   const names = ["themes", "events", "rules", "sponsors"];
   const currentName = names[tab];
 
@@ -79,14 +72,6 @@ export default function AdminPage() {
 
   // ================= LOAD =================
 
-  useEffect(() => {
-    if (tab === 4) {
-      loadRegistrations();
-    } else {
-      loadData();
-    }
-  }, [tab]);
-
   const loadData = async () => {
     const res = await fetch(`${API}/api/${currentName}`);
     const json = await res.json();
@@ -98,6 +83,14 @@ export default function AdminPage() {
     const json = await res.json();
     setRegistrations(json);
   };
+
+  useEffect(() => {
+    if (tab === 4) {
+      loadRegistrations();
+    } else {
+      loadData();
+    }
+  }, [tab]);
 
   // ================= CREATE / UPDATE =================
 
@@ -227,6 +220,29 @@ export default function AdminPage() {
     link.download = "registrations.csv";
     link.click();
   };
+
+  // ================= Size Summary ================
+  const getSizeSummary = () => {
+    const summary = {
+      XS: 0,
+      S: 0,
+      M: 0,
+      L: 0,
+      XL: 0,
+      XXL: 0,
+    };
+
+    registrations.forEach((r) => {
+      if (summary[r.teamLeadTshirt] !== undefined) summary[r.teamLeadTshirt]++;
+
+      if (summary[r.member1Tshirt] !== undefined) summary[r.member1Tshirt]++;
+
+      if (summary[r.member2Tshirt] !== undefined) summary[r.member2Tshirt]++;
+    });
+
+    return summary;
+  };
+  const sizeSummary = getSizeSummary();
 
   // ================= UI =================
 
@@ -441,6 +457,19 @@ export default function AdminPage() {
         <Paper sx={{ mt: 4, height: 600 }}>
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Typography variant="h6">Registrations</Typography>
+            <Box mt={4} mb={2}>
+              <Grid container spacing={2}>
+                {Object.entries(sizeSummary).map(([size, count]) => (
+                  <Grid item key={size}>
+                    <Card sx={{ px: 3, py: 1, textAlign: "center" }}>
+                      <Typography variant="h6">
+                        {size} : {count}
+                      </Typography>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
 
             <Box>
               <Button

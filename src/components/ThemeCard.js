@@ -1,7 +1,7 @@
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
-import { API } from "../utils/api";
+import { API } from "../utils/common";
 
 export default function ThemeCard({ theme: themeItem, onClick }) {
   const theme = useTheme();

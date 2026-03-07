@@ -3,7 +3,7 @@ import { Container, Box } from "@mui/material";
 import SectionHeading from "../components/SectionHeading";
 import Sponsors from "../components/Sponsors";
 import { useLocation } from "react-router-dom";
-import { API } from "../utils/api";
+import { API } from "../utils/common";
 import EventCard from "../components/EventCard";
 
 export default function EventPage() {

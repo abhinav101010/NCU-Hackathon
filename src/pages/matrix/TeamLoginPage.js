@@ -7,7 +7,7 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { API } from "../../utils/api";
+import { API } from "../../utils/common";
 
 export default function TeamLoginPage() {
   const navigate = useNavigate();

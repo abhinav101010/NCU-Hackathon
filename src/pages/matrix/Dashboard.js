@@ -14,7 +14,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { API } from "../../utils/api";
+import { API } from "../../utils/common";
 
 export default function Dashboard() {
   const [team, setTeam] = useState(null);

@@ -4,6 +4,7 @@ const router = express.Router();
 const Registration = require("../models/Registration");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { calculateTimeLeft } = require("../../utils/common");
 // const teamCode = "TEAM-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
 //
@@ -102,6 +103,11 @@ router.get("/:id", async (req, res) => {
 // 🔹 CREATE
 //
 router.post("/", async (req, res) => {
+  if (calculateTimeLeft().expired) {
+    return res.status(403).json({
+      error: "Registrations are closed",
+    });
+  }
   try {
     const {
       teamName,

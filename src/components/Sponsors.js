@@ -2,7 +2,7 @@ import { Container, Box, CircularProgress } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import { API } from "../utils/api";
+import { API } from "../utils/common";
 
 export default function Sponsors() {
 
