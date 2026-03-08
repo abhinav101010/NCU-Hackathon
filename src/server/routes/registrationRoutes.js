@@ -63,11 +63,22 @@ router.get("/me", async (req, res) => {
 router.put("/me", async (req, res) => {
   try {
     const token = req.headers.authorization;
+    if (!token) return res.status(401).json({ error: "No token provided" });
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const updated = await Registration.findByIdAndUpdate(decoded.id, req.body, {
-      new: true,
-    }).select("-password");
+    const updateData = { ...req.body };
+
+    // if password is being changed, hash it
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+
+    const updated = await Registration.findByIdAndUpdate(
+      decoded.id,
+      updateData,
+      { new: true }
+    ).select("-password");
 
     res.json(updated);
   } catch (err) {

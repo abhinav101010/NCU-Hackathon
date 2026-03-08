@@ -29,6 +29,8 @@ export default function Dashboard() {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("teamToken");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     loadTeam();
@@ -60,6 +62,11 @@ export default function Dashboard() {
     setExpanded(isExpanded ? panel : false);
 
   const handleUpdate = async () => {
+    if (newPassword && newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     const payload = {
       teamName: team.teamName,
       teamLead: team.teamLead,
@@ -73,7 +80,12 @@ export default function Dashboard() {
       member2Tshirt: team.member2Tshirt,
       selectedTheme: team.selectedTheme,
       ideaDescription: team.ideaDescription,
+      email: team.email,
     };
+
+    if (newPassword) {
+      payload.password = newPassword;
+    }
 
     const res = await fetch(`${API}/api/registrations/me`, {
       method: "PUT",
@@ -87,6 +99,8 @@ export default function Dashboard() {
     const data = await res.json();
     setTeam(data);
     setEditing(false);
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   const handleLogout = () => {
@@ -127,6 +141,54 @@ export default function Dashboard() {
           Logout
         </Button>
       </Box>
+
+      {/* LOGIN CREDENTIALS */}
+      <Accordion
+        expanded={expanded === "login"}
+        onChange={handleAccordion("login")}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography fontWeight={600}>Login Credentials</Typography>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Login Username"
+                value={team.email || ""}
+                disabled={!editing}
+                onChange={(e) => handleFieldChange("email", e.target.value)}
+              />
+            </Grid>
+
+            {editing && (
+              <>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="New Password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Confirm Password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
 
       {/* TEAM INFO */}
       <Accordion

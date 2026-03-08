@@ -521,7 +521,7 @@ export default function RegistrationForm() {
 
                   <TextField
                     fullWidth
-                    label="Login Email"
+                    label="Login Username"
                     margin="normal"
                     sx={inputStyle}
                     value={formData.email}
