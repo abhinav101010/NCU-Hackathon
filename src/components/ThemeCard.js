@@ -1,74 +1,211 @@
-import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import { motion } from "framer-motion";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  ListItem,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useTheme } from "@mui/material/styles";
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import { API } from "../utils/common";
 
-export default function ThemeCard({ theme: themeItem, onClick }) {
+export default function ThemeCard({ theme: themeItem }) {
   const theme = useTheme();
+  const location = useLocation();
+  const isThemesPage = location.pathname === "/themes";
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleClick = () => {
+    if (!isThemesPage) {
+      setOpenDialog(true);
+    }
+  };
+
+  // convert text → array
+  const problems =
+    themeItem?.problemStatements?.split("\n").filter((p) => p.trim() !== "") ||
+    [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-      whileHover={{ scale: 1.04 }}
-      style={{ display: "flex", justifyContent: "center" }}
-    >
-      <Card
-        onClick={() => onClick && onClick(themeItem)}
+    <>
+      <Box
         sx={{
-          width: 300,
-          cursor: "pointer",
-
-          background: theme.palette.background.paper,
-
-          border: `1px solid ${theme.palette.primary.main}`,
-
-          backdropFilter: "blur(20px)",
-
-          borderRadius: "16px",
-
-          transition: "0.35s",
-
-          boxShadow: `0 0 15px ${theme.palette.primary.main}33`,
-
-          "&:hover": {
-            boxShadow: `0 0 35px ${theme.palette.primary.main}66`,
-            transform: "translateY(-6px)",
-          },
+          width: 320,
+          height: !isThemesPage ? 330 : 420,
         }}
       >
-        <CardMedia
-          component="img"
-          image={`${API}${themeItem?.img}`}
-          alt={themeItem?.title}
+        <Card
+          onClick={handleClick}
           sx={{
-            height: 200,
-            objectFit: "cover",
+            height: "100%",
+            borderRadius: "16px",
+            border: `1px solid ${theme.palette.primary.main}`,
+            background: theme.palette.background.paper,
+            boxShadow: `0 0 15px ${theme.palette.primary.main}33`,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            cursor: isThemesPage ? "default" : "pointer",
           }}
-        />
+        >
+          {/* IMAGE */}
 
-        <CardContent>
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            sx={{ color: theme.palette.primary.main }}
-            gutterBottom
-          >
-            {themeItem?.title}
-          </Typography>
+          <CardMedia
+            component="img"
+            image={`${API}${themeItem?.img}`}
+            alt={themeItem?.title}
+            sx={{
+              height: 180,
+              objectFit: "cover",
+              flexShrink: 0,
+            }}
+          />
 
-          <Typography
-            variant="body2"
-            sx={{ color: theme.palette.text.secondary }}
+          {/* CONTENT */}
+
+          <CardContent
+            sx={{
+              flexGrow: 1,
+              p: 0,
+              display: "flex",
+              flexDirection: "column",
+              overflowY: "auto",
+              scrollbarWidth: "thin",
+            }}
           >
-            {themeItem?.desc
-              ? `${themeItem.desc.substring(0, 60)}...`
-              : "No description available"}
-          </Typography>
-        </CardContent>
-      </Card>
-    </motion.div>
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              sx={{
+                color: theme.palette.primary.main,
+                px: 2,
+                pt: 2,
+              }}
+            >
+              {themeItem?.title}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: theme.palette.text.secondary,
+                px: 2,
+                mt: 1,
+                mb: 1,
+              }}
+            >
+              {themeItem?.desc.substring(0, 100)}...
+            </Typography>
+
+            {/* SINGLE ACCORDION */}
+
+            {isThemesPage && problems.length > 0 && (
+              <Accordion
+                sx={{
+                  mt: "auto",
+                  width: "100%",
+                  boxShadow: "none",
+                  borderTop: `1px solid ${theme.palette.divider}`,
+                  borderRadius: 0,
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography
+                    variant="subtitle2"
+                    fontWeight="bold"
+                    sx={{ color: theme.palette.primary.main }}
+                  >
+                    Problem Statements
+                  </Typography>
+                </AccordionSummary>
+
+                <AccordionDetails
+                  sx={{
+                    maxHeight: 160,
+                    overflowY: "auto",
+                  }}
+                >
+                  <List dense>
+                    {problems.map((p, i) => (
+                      <ListItem key={i}>
+                        <Typography variant="body2">
+                          {i + 1}. {p}
+                        </Typography>
+                      </ListItem>
+                    ))}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* DIALOG */}
+
+      {!isThemesPage && (
+        <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>{themeItem?.title}</DialogTitle>
+
+          <DialogContent dividers>
+            <Box
+              component="img"
+              src={`${API}${themeItem?.img}`}
+              alt={themeItem?.title}
+              sx={{
+                width: "100%",
+                borderRadius: 2,
+                mb: 2,
+              }}
+            />
+
+            <Typography sx={{ mb: 2 }}>{themeItem?.desc}</Typography>
+
+            {problems.length > 0 && (
+              <Accordion
+                defaultExpanded
+                sx={{
+                  boxShadow: "none",
+                  border: `1px solid ${theme.palette.divider}`,
+                  borderRadius: "8px",
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography fontWeight="bold">Problem Statements</Typography>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  <List dense>
+                    {problems.map((p, i) => (
+                      <ListItem key={i}>
+                        <Typography variant="body2">
+                          {i + 1}. {p}
+                        </Typography>
+                      </ListItem>
+                    ))}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }

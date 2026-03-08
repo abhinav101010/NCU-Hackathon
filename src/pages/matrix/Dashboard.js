@@ -6,21 +6,28 @@ import {
   Button,
   Grid,
   Box,
-  Paper,
   Divider,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   CircularProgress,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { API } from "../../utils/common";
+
+const tshirtSizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function Dashboard() {
   const [team, setTeam] = useState(null);
   const [themes, setThemes] = useState([]);
   const [editing, setEditing] = useState(false);
-
+  const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
   const token = localStorage.getItem("teamToken");
 
   useEffect(() => {
@@ -32,7 +39,6 @@ export default function Dashboard() {
     const res = await fetch(`${API}/api/registrations/me`, {
       headers: { Authorization: token },
     });
-
     const data = await res.json();
     setTeam(data);
   };
@@ -43,12 +49,15 @@ export default function Dashboard() {
     setThemes(data);
   };
 
-  const handleChange = (field, value) => {
+  const handleFieldChange = (field, value) => {
     setTeam((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
+
+  const handleAccordion = (panel) => (_, isExpanded) =>
+    setExpanded(isExpanded ? panel : false);
 
   const handleUpdate = async () => {
     const payload = {
@@ -59,6 +68,9 @@ export default function Dashboard() {
       yearCourse: team.yearCourse,
       member1: team.member1,
       member2: team.member2,
+      teamLeadTshirt: team.teamLeadTshirt,
+      member1Tshirt: team.member1Tshirt,
+      member2Tshirt: team.member2Tshirt,
       selectedTheme: team.selectedTheme,
       ideaDescription: team.ideaDescription,
     };
@@ -77,6 +89,11 @@ export default function Dashboard() {
     setEditing(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("teamToken");
+    navigate("/login");
+  };
+
   if (!team)
     return (
       <Box sx={{ mt: 20, textAlign: "center" }}>
@@ -85,161 +102,291 @@ export default function Dashboard() {
     );
 
   return (
-    <Container maxWidth="md" sx={{ mt: 12 }}>
-      <Paper sx={{ p: 5 }}>
-        <Typography variant="h4" fontWeight={700} gutterBottom>
-          {team.teamName} Dashboard
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Manage your team details and project submission
-        </Typography>
-
-        <Divider sx={{ mb: 4 }} />
-
-        <Grid container spacing={3}>
-          {/* TEAM NAME */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Team Name"
-              value={team.teamName || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("teamName", e.target.value)}
-            />
-          </Grid>
-
-          {/* TEAM LEAD */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Team Lead"
-              value={team.teamLead || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("teamLead", e.target.value)}
-            />
-          </Grid>
-
-          {/* PHONE */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Phone"
-              value={team.phone || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("phone", e.target.value)}
-            />
-          </Grid>
-
-          {/* EMAIL */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Email"
-              value={team.email || ""}
-              disabled
-            />
-          </Grid>
-
-          {/* UNIVERSITY */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="University"
-              value={team.university || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("university", e.target.value)}
-            />
-          </Grid>
-
-          {/* YEAR COURSE */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Year & Course"
-              value={team.yearCourse || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("yearCourse", e.target.value)}
-            />
-          </Grid>
-
-          {/* MEMBER 1 */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Team Member 1"
-              value={team.member1 || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("member1", e.target.value)}
-            />
-          </Grid>
-
-          {/* MEMBER 2 */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Team Member 2"
-              value={team.member2 || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("member2", e.target.value)}
-            />
-          </Grid>
-
-          {/* THEME */}
-          <Grid item xs={12}>
-            <FormControl fullWidth disabled={!editing}>
-              <InputLabel>Select Theme</InputLabel>
-              <Select
-                value={team.selectedTheme || ""}
-                label="Select Theme"
-                onChange={(e) => handleChange("selectedTheme", e.target.value)}
-              >
-                {themes.map((theme) => (
-                  <MenuItem key={theme._id} value={theme.title}>
-                    {theme.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* IDEA DESCRIPTION */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              multiline
-              rows={8}
-              label="Project Idea Description"
-              placeholder="Explain your project idea in detail. Include problem statement, solution, technologies, and impact."
-              value={team.ideaDescription || ""}
-              disabled={!editing}
-              onChange={(e) => handleChange("ideaDescription", e.target.value)}
-              helperText="Provide a detailed explanation of your project idea"
-              sx={{
-                "& textarea": {
-                  fontSize: "15px",
-                  lineHeight: 1.6,
-                },
-              }}
-            />
-          </Grid>
-        </Grid>
-
-        <Box sx={{ mt: 4 }}>
-          {!editing ? (
-            <Button variant="contained" onClick={() => setEditing(true)}>
-              Edit Details
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleUpdate}
-            >
-              Save Changes
-            </Button>
-          )}
+    <Container maxWidth="md" sx={{ mt: 12, mb: 8 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" fontWeight={700}>
+            Team Dashboard
+          </Typography>
+          <Typography variant="h6">
+            Logged in as <b>{team.teamName}</b>
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Manage your hackathon team details and project idea.
+          </Typography>
         </Box>
-      </Paper>
+
+        <Button variant="outlined" color="error" onClick={handleLogout}>
+          Logout
+        </Button>
+      </Box>
+
+      {/* TEAM INFO */}
+      <Accordion
+        expanded={expanded === "team"}
+        onChange={handleAccordion("team")}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography fontWeight={600}>Team Info</Typography>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Team Name"
+                value={team.teamName || ""}
+                disabled={!editing}
+                onChange={(e) => handleFieldChange("teamName", e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Team Lead"
+                value={team.teamLead || ""}
+                disabled={!editing}
+                onChange={(e) => handleFieldChange("teamLead", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth disabled={!editing}>
+                <InputLabel>Team Lead T-Shirt</InputLabel>
+                <Select
+                  value={team.teamLeadTshirt || ""}
+                  label="Team Lead T-Shirt"
+                  onChange={(e) =>
+                    handleFieldChange("teamLeadTshirt", e.target.value)
+                  }
+                >
+                  {tshirtSizes.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Team Lead Email"
+                value={team.teamLeadEmail || ""}
+                disabled
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Phone"
+                value={team.phone || ""}
+                disabled={!editing}
+                onChange={(e) => handleFieldChange("phone", e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant="body2" color="text.secondary">
+                Team ID: {team.teamId}
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary">
+                Registered on: {new Date(team.createdAt).toLocaleString()}
+              </Typography>
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* UNIVERSITY */}
+      <Accordion
+        expanded={expanded === "university"}
+        onChange={handleAccordion("university")}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography fontWeight={600}>University Info</Typography>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="University"
+                value={team.university || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("university", e.target.value)
+                }
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Year & Course"
+                value={team.yearCourse || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("yearCourse", e.target.value)
+                }
+              />
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* MEMBERS + TSHIRT */}
+      <Accordion
+        expanded={expanded === "members"}
+        onChange={handleAccordion("members")}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography fontWeight={600}>Team Members & T-Shirt Sizes</Typography>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Member 1"
+                value={team.member1 || ""}
+                disabled={!editing}
+                onChange={(e) => handleFieldChange("member1", e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth disabled={!editing}>
+                <InputLabel>Member 1 T-Shirt</InputLabel>
+                <Select
+                  value={team.member1Tshirt || ""}
+                  label="Member 1 T-Shirt"
+                  onChange={(e) =>
+                    handleFieldChange("member1Tshirt", e.target.value)
+                  }
+                >
+                  {tshirtSizes.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Member 2"
+                value={team.member2 || ""}
+                disabled={!editing}
+                onChange={(e) => handleFieldChange("member2", e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth disabled={!editing}>
+                <InputLabel>Member 2 T-Shirt</InputLabel>
+                <Select
+                  value={team.member2Tshirt || ""}
+                  label="Member 2 T-Shirt"
+                  onChange={(e) =>
+                    handleFieldChange("member2Tshirt", e.target.value)
+                  }
+                >
+                  {tshirtSizes.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* IDEA */}
+      <Accordion
+        expanded={expanded === "idea"}
+        onChange={handleAccordion("idea")}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography fontWeight={600}>Hackathon Idea</Typography>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <FormControl fullWidth disabled={!editing}>
+                <InputLabel>Select Theme</InputLabel>
+                <Select
+                  value={team.selectedTheme || ""}
+                  label="Select Theme"
+                  onChange={(e) =>
+                    handleFieldChange("selectedTheme", e.target.value)
+                  }
+                >
+                  {themes.map((theme) => (
+                    <MenuItem key={theme._id} value={theme.title}>
+                      {theme.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                minRows={10}
+                maxRows={20}
+                label="Project Idea Description"
+                placeholder="Describe your hackathon idea, problem statement, solution, and how it works..."
+                value={team.ideaDescription || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("ideaDescription", e.target.value)
+                }
+                sx={{
+                  "& textarea": {
+                    resize: "both",
+                    fontSize: "1rem",
+                    lineHeight: 1.6,
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* ACTION BUTTON */}
+      <Box sx={{ mt: 4 }}>
+        {!editing ? (
+          <Button variant="contained" onClick={() => setEditing(true)}>
+            Edit Details
+          </Button>
+        ) : (
+          <Button variant="contained" color="secondary" onClick={handleUpdate}>
+            Save Changes
+          </Button>
+        )}
+      </Box>
     </Container>
   );
 }

@@ -7,11 +7,18 @@ import {
   Button,
   Paper,
   CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { API } from "../utils/common.js";
+import logo from "../utils/logo.png";
 
 export default function SponsorsPage() {
   const theme = useTheme();
@@ -191,7 +198,19 @@ export default function SponsorsPage() {
                             : "rgba(255,255,255,0.05)",
                       }}
                     >
-                      Logo
+                      {/* <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      </Box> */}
+                      <img
+                        src={logo}
+                        alt="Innovathon Logo"
+                        style={{ height: 65 }}
+                      />
                     </Box>
 
                     <Typography
@@ -284,6 +303,85 @@ export default function SponsorsPage() {
         )}
       </Box>
 
+      {/* Sponsorship Benefits Table */}
+
+      <Box sx={{ mt: 12, mb: 6 }}>
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            mb: 6,
+            color: theme.palette.primary.main,
+          }}
+        >
+          Sponsorship Benefits
+        </Typography>
+
+        <TableContainer
+          component={Paper}
+          sx={{
+            borderRadius: 3,
+            border: `1px solid ${theme.palette.primary.main}40`,
+            backdropFilter: "blur(10px)",
+            background:
+              theme.palette.mode === "light"
+                ? "#fff"
+                : "rgba(255,255,255,0.04)",
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>TIER</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  BENEFITS SUMMARY
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {[
+                {
+                  tier: "Silver",
+                  benefit: "Logo on website & social media",
+                },
+                {
+                  tier: "Gold",
+                  benefit: "Posters, reels, certificates, speaker access",
+                },
+                {
+                  tier: "Platinum",
+                  benefit: "Branding, product demos, website placement, booth",
+                },
+                {
+                  tier: "Co-Title",
+                  benefit:
+                    "Promotion during hackathon sessions, opportunity to judge the final round",
+                },
+                {
+                  tier: "Title",
+                  benefit:
+                    "All banners, keynote, exclusive branding, premium booth",
+                },
+              ].map((row, i) => (
+                <TableRow
+                  key={i}
+                  sx={{
+                    background:
+                      selectedTier === row.tier.toLowerCase()
+                        ? theme.palette.primary.main + "20"
+                        : "transparent",
+                  }}
+                >
+                  <TableCell>{row.tier}</TableCell>
+                  <TableCell>{row.benefit}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
       {/* Become Sponsor Section */}
 
       <Box

@@ -5,7 +5,6 @@ import { API } from "../utils/common";
 
 export default function EventCard({ event, index }) {
   const theme = useTheme();
-
   const isReverse = index % 2 === 1;
 
   return (
@@ -17,53 +16,30 @@ export default function EventCard({ event, index }) {
     >
       <Grid
         container
-        spacing={6}
+        spacing={8}
         alignItems="center"
         direction={isReverse ? "row-reverse" : "row"}
-        sx={{ mb: 10 }}
+        sx={{ mb: 12 }}
       >
         {/* IMAGE */}
-        <Grid
-          item
-          xs={12}
-          md={6}
-          sx={{ display: "flex", justifyContent: "center" }}
-        >
+        <Grid item xs={12} md={6} display="flex" justifyContent="center">
           <Box
+            component="img"
+            src={`${API}${event?.img}`}
+            alt={event?.title}
             sx={{
-              p: 2,
-              background: theme.palette.background.paper,
-              border: `1px solid ${theme.palette.divider}`,
-              borderRadius: 3,
-              backdropFilter: "blur(8px)",
-
-              boxShadow: theme.shadows[2],
-
-              maxWidth: 380,
               width: "100%",
-              display: "flex",
-              justifyContent: "center",
-
-              transition: "0.3s",
-
+              maxWidth: 520,
+              height: "auto",
+              objectFit: "cover",
+              borderRadius: 4,
+              boxShadow: theme.shadows[4],
+              transition: "0.4s",
               "&:hover": {
-                transform: "translateY(-4px)",
-                boxShadow: theme.shadows[6],
+                transform: "scale(1.03)",
               },
             }}
-          >
-            <Box
-              component="img"
-              src={`${API}${event?.img}`}
-              alt={event?.title}
-              sx={{
-                width: "100%",
-                height: 220,
-                objectFit: "cover",
-                borderRadius: 2,
-              }}
-            />
-          </Box>
+          />
         </Grid>
 
         {/* CONTENT */}
@@ -72,47 +48,92 @@ export default function EventCard({ event, index }) {
             elevation={0}
             sx={{
               p: 4,
-              background: theme.palette.background.paper,
+              width: "100%",
+              borderRadius: 4,
               border: `1px solid ${theme.palette.divider}`,
-              borderRadius: 3,
+              background: theme.palette.background.paper,
               backdropFilter: "blur(8px)",
-
-              boxShadow: theme.shadows[1],
-
-              transition: "0.3s",
-
-              "&:hover": {
-                boxShadow: theme.shadows[4],
-              },
             }}
           >
+            {/* TITLE */}
             <Typography
               variant="h4"
               fontWeight={700}
-              gutterBottom
-              sx={{ color: theme.palette.primary.main }}
+              sx={{
+                color: theme.palette.primary.main,
+                mb: 1,
+              }}
             >
-              {event?.title || "Untitled Event"}
+              {event?.title}
             </Typography>
 
+            {/* DATE */}
             <Typography
               sx={{
-                color: theme.palette.text.secondary,
-                mb: 2,
+                mb: 3,
+                mt: -1.5,
                 fontSize: "0.95rem",
+                color: theme.palette.text.secondary,
               }}
             >
-              {event?.date || ""}
+              {event?.date}
             </Typography>
 
-            <Typography
+            {/* DESCRIPTION HTML */}
+            <Box
               sx={{
-                lineHeight: 1.7,
-                color: theme.palette.text.primary,
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                },
+                gap: 3,
+
+                "& p": {
+                  m: 0,
+                  mt: -2,
+                  lineHeight: 1.6,
+                },
+
+                "& h4": {
+                  mt: -2,
+                  mb: 1,
+                  fontWeight: 600,
+                  color: theme.palette.primary.main,
+                },
+
+                "& ul": {
+                  pl: 3,
+                  mb: 0,
+                },
+
+                "& li": {
+                  mb: 0.6,
+                },
+
+                /* 2 column layout */
+                "& .two-col": {
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "repeat(2, 1fr)",
+                  },
+                  gap: 3,
+                },
+
+                /* 3 column layout */
+                "& .three-col": {
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "repeat(3, 1fr)",
+                  },
+                  gap: 3,
+                },
               }}
-            >
-              {event?.desc || "Event details coming soon."}
-            </Typography>
+              dangerouslySetInnerHTML={{
+                __html: event?.desc || "<p>Details coming soon.</p>",
+              }}
+            />
           </Paper>
         </Grid>
       </Grid>

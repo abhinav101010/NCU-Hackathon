@@ -3,7 +3,8 @@ const router = express.Router();
 const Theme = require("../models/Theme");
 const upload = require("../middleware/upload");
 
-// GET all themes
+// ================= GET ALL =================
+
 router.get("/", async (req, res) => {
   try {
     const themes = await Theme.find().sort({ createdAt: -1 });
@@ -13,7 +14,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET single theme
+// ================= GET ONE =================
+
 router.get("/:id", async (req, res) => {
   try {
     const theme = await Theme.findById(req.params.id);
@@ -23,58 +25,55 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// ================= CREATE =================
 
-// CREATE theme (with image upload)
 router.post("/", upload.single("img"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "Image is required" });
+      return res.status(400).json({ error: "Image required" });
     }
 
-    const newTheme = new Theme({
+    const theme = new Theme({
       title: req.body.title,
       desc: req.body.desc,
       img: `/uploads/themes/${req.file.filename}`,
+      problemStatements: req.body.problemStatements || "",
     });
 
-    await newTheme.save();
+    await theme.save();
 
-    res.status(201).json(newTheme);
+    res.status(201).json(theme);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
+// ================= UPDATE =================
 
-// UPDATE theme (image optional)
 router.put("/:id", upload.single("img"), async (req, res) => {
   try {
-
     const updateData = {
       title: req.body.title,
       desc: req.body.desc,
+      problemStatements: req.body.problemStatements || "",
     };
 
-    // if new image uploaded
     if (req.file) {
       updateData.img = `/uploads/themes/${req.file.filename}`;
     }
 
-    const updated = await Theme.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
+    const updated = await Theme.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
 
     res.json(updated);
-
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
+// ================= DELETE =================
 
-// DELETE theme
 router.delete("/:id", async (req, res) => {
   try {
     await Theme.findByIdAndDelete(req.params.id);
