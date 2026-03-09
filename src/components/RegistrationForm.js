@@ -19,9 +19,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { MenuItem } from "@mui/material";
 import { API, calculateTimeLeft } from "../utils/common";
 import Countdown from "./Countdown";
+import { useNavigate } from "react-router-dom";
 
 export default function RegistrationForm() {
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedThemeObj, setSelectedThemeObj] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -38,10 +40,17 @@ export default function RegistrationForm() {
     phone: "",
     university: "",
     yearCourse: "",
+
     member1: "",
+    member1Email: "",
+    member1Phone: "",
     member1Tshirt: "",
+
     member2: "",
+    member2Email: "",
+    member2Phone: "",
     member2Tshirt: "",
+
     email: "",
     password: "",
     selectedTheme: "",
@@ -122,19 +131,45 @@ export default function RegistrationForm() {
   const handleNextStep2 = () => {
     const newErrors = {};
 
+    /* MEMBER 1 VALIDATION */
+
     if (!validateName(formData.member1)) newErrors.member1 = "Enter valid name";
 
-    if (!validateName(formData.member2)) newErrors.member2 = "Enter valid name";
+    if (!validateEmail(formData.member1Email))
+      newErrors.member1Email = "Enter valid email";
+
+    if (!validatePhone(formData.member1Phone))
+      newErrors.member1Phone = "Enter valid 10 digit phone";
 
     if (!formData.member1Tshirt) newErrors.member1Tshirt = "Select Size";
 
+    /* MEMBER 2 VALIDATION */
+
+    if (!validateName(formData.member2)) newErrors.member2 = "Enter valid name";
+
+    if (!validateEmail(formData.member2Email))
+      newErrors.member2Email = "Enter valid email";
+
+    if (!validatePhone(formData.member2Phone))
+      newErrors.member2Phone = "Enter valid 10 digit phone";
+
     if (!formData.member2Tshirt) newErrors.member2Tshirt = "Select Size";
+
+    /* CHECK DUPLICATE MEMBERS */
 
     if (formData.member1 === formData.member2)
       newErrors.member2 = "Members must be different";
 
+    /* CHECK DUPLICATE EMAILS */
+
+    if (formData.member1Email === formData.member2Email)
+      newErrors.member2Email = "Emails must be different";
+
+    /* PASSWORD VALIDATION */
+
     if (!validatePassword(formData.password))
-      newErrors.password = "Password must contain only letters and numbers";
+      newErrors.password =
+        "Password must contain letters and numbers (min 6 chars)";
 
     setErrors(newErrors);
 
@@ -195,6 +230,7 @@ export default function RegistrationForm() {
         });
 
         setStep(1);
+        navigate("/login");
       } else {
         toast.error(data.error || "Registration failed");
       }
@@ -448,6 +484,34 @@ export default function RegistrationForm() {
                           )
                         }
                       />
+                      <TextField
+                        fullWidth
+                        label="Member 1 Email"
+                        margin="normal"
+                        sx={inputStyle}
+                        value={formData.member1Email}
+                        error={!!errors.member1Email}
+                        helperText={errors.member1Email}
+                        onChange={(e) =>
+                          updateField("member1Email", e.target.value)
+                        }
+                      />
+
+                      <TextField
+                        fullWidth
+                        label="Member 1 Phone"
+                        margin="normal"
+                        sx={inputStyle}
+                        value={formData.member1Phone}
+                        error={!!errors.member1Phone}
+                        helperText={errors.member1Phone}
+                        onChange={(e) =>
+                          updateField(
+                            "member1Phone",
+                            e.target.value.replace(/\D/g, ""),
+                          )
+                        }
+                      />
                     </Grid>
 
                     <Grid item xs={4}>
@@ -455,7 +519,7 @@ export default function RegistrationForm() {
                         fullWidth
                         select
                         required
-                        label="T-Shirt Size"
+                        label="Memeber 1 T-Shirt Size"
                         margin="normal"
                         sx={{ ...inputStyle, minWidth: 150 }}
                         value={formData.member1Tshirt}
@@ -491,6 +555,34 @@ export default function RegistrationForm() {
                           )
                         }
                       />
+                      <TextField
+                        fullWidth
+                        label="Member 2 Email"
+                        margin="normal"
+                        sx={inputStyle}
+                        value={formData.member2Email}
+                        error={!!errors.member2Email}
+                        helperText={errors.member2Email}
+                        onChange={(e) =>
+                          updateField("member2Email", e.target.value)
+                        }
+                      />
+
+                      <TextField
+                        fullWidth
+                        label="Member 2 Phone"
+                        margin="normal"
+                        sx={inputStyle}
+                        value={formData.member2Phone}
+                        error={!!errors.member2Phone}
+                        helperText={errors.member2Phone}
+                        onChange={(e) =>
+                          updateField(
+                            "member2Phone",
+                            e.target.value.replace(/\D/g, ""),
+                          )
+                        }
+                      />
                     </Grid>
 
                     <Grid item xs={4}>
@@ -498,7 +590,7 @@ export default function RegistrationForm() {
                         fullWidth
                         select
                         required
-                        label="T-Shirt Size"
+                        label="Memeber 2 T-Shirt Size"
                         margin="normal"
                         sx={{ ...inputStyle, minWidth: 150 }}
                         value={formData.member2Tshirt}

@@ -5,7 +5,6 @@ const Registration = require("../models/Registration");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { calculateTimeLeft } = require("../../utils/common");
-// const teamCode = "TEAM-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
 //
 // 🔹 LOGIN TEAM (MUST COME FIRST)
@@ -25,7 +24,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: team._id, teamId: team.teamId, role: "team" },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" },
+      { expiresIn: "1d" }
     );
 
     res.json({
@@ -40,7 +39,7 @@ router.post("/login", async (req, res) => {
 });
 
 //
-// 🔹 GET CURRENT TEAM (MUST COME BEFORE /:id)
+// 🔹 GET CURRENT TEAM
 //
 router.get("/me", async (req, res) => {
   try {
@@ -60,16 +59,19 @@ router.get("/me", async (req, res) => {
   }
 });
 
+//
+// 🔹 UPDATE CURRENT TEAM
+//
 router.put("/me", async (req, res) => {
   try {
     const token = req.headers.authorization;
+
     if (!token) return res.status(401).json({ error: "No token provided" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const updateData = { ...req.body };
 
-    // if password is being changed, hash it
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
@@ -87,7 +89,7 @@ router.put("/me", async (req, res) => {
 });
 
 //
-// 🔹 GET ALL (Admin)
+// 🔹 GET ALL TEAMS (Admin)
 //
 router.get("/", async (req, res) => {
   try {
@@ -99,7 +101,7 @@ router.get("/", async (req, res) => {
 });
 
 //
-// 🔹 GET SINGLE
+// 🔹 GET SINGLE TEAM
 //
 router.get("/:id", async (req, res) => {
   try {
@@ -111,7 +113,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //
-// 🔹 CREATE
+// 🔹 CREATE REGISTRATION
 //
 router.post("/", async (req, res) => {
   if (calculateTimeLeft().expired) {
@@ -119,6 +121,7 @@ router.post("/", async (req, res) => {
       error: "Registrations are closed",
     });
   }
+
   try {
     const {
       teamName,
@@ -130,15 +133,37 @@ router.post("/", async (req, res) => {
       password,
       university,
       yearCourse,
+
       member1,
+      member1Email,
+      member1Phone,
       member1Tshirt,
+
       member2,
+      member2Email,
+      member2Phone,
       member2Tshirt,
+
       selectedTheme,
       ideaDescription,
     } = req.body;
 
-    if (!teamName || !teamLead || !teamLeadEmail || !email || !password) {
+    if (
+      !teamName ||
+      !teamLead ||
+      !teamLeadEmail ||
+      !email ||
+      !password ||
+      !teamLeadTshirt ||
+      !member1 ||
+      !member1Email ||
+      !member1Phone ||
+      !member1Tshirt ||
+      !member2 ||
+      !member2Email ||
+      !member2Phone ||
+      !member2Tshirt
+    ) {
       return res.status(400).json({
         error: "Required fields missing",
       });
@@ -156,46 +181,42 @@ router.post("/", async (req, res) => {
         "TEAM-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
       const existing = await Registration.findOne({ teamId: teamCode });
+
       if (!existing) exists = false;
     }
 
     const registration = new Registration({
       teamId: teamCode,
+
       teamName,
       teamLead,
       teamLeadEmail,
       teamLeadTshirt,
       phone,
+
       email,
       password: hashedPassword,
+
       university,
       yearCourse,
+
       member1,
+      member1Email,
+      member1Phone,
       member1Tshirt,
+
       member2,
+      member2Email,
+      member2Phone,
       member2Tshirt,
+
       selectedTheme,
       ideaDescription,
     });
 
-    if (
-      !teamName ||
-      !teamLead ||
-      !teamLeadEmail ||
-      !email ||
-      !password ||
-      !teamLeadTshirt ||
-      !member1Tshirt ||
-      !member2Tshirt
-    ) {
-      return res.status(400).json({
-        error: "Required fields missing",
-      });
-    }
-
     await registration.save();
 
-    // send email
+    // send team code email
     try {
       await sendTeamCode(teamLeadEmail, teamCode);
       console.log("Email sent successfully");
@@ -222,7 +243,7 @@ router.put("/:id", async (req, res) => {
     const updated = await Registration.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true },
+      { new: true }
     );
 
     res.json(updated);
@@ -232,11 +253,12 @@ router.put("/:id", async (req, res) => {
 });
 
 //
-// 🔹 DELETE
+// 🔹 DELETE TEAM
 //
 router.delete("/:id", async (req, res) => {
   try {
     await Registration.findByIdAndDelete(req.params.id);
+
     res.json({ message: "Team deleted" });
   } catch (err) {
     res.status(400).json({ error: err.message });

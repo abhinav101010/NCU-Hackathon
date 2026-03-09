@@ -44,18 +44,34 @@ export default function AdminPage() {
     { field: "teamId", headerName: "Team ID", width: 120 },
     { field: "teamName", headerName: "Team Name", width: 180 },
     { field: "selectedTheme", headerName: "Theme", width: 180 },
+
     { field: "teamLead", headerName: "Team Lead", width: 160 },
     { field: "teamLeadTshirt", headerName: "TL Size", width: 100 },
     { field: "teamLeadEmail", headerName: "Lead Email", width: 200 },
-    { field: "phone", headerName: "Phone", width: 140 },
+
+    { field: "phone", headerName: "Lead Phone", width: 140 },
+
     { field: "university", headerName: "University", width: 180 },
     { field: "yearCourse", headerName: "Year & Course", width: 160 },
+
     { field: "member1", headerName: "Member 1", width: 160 },
+    { field: "member1Email", headerName: "M1 Email", width: 200 },
+    { field: "member1Phone", headerName: "M1 Phone", width: 150 },
     { field: "member1Tshirt", headerName: "M1 Size", width: 100 },
+
     { field: "member2", headerName: "Member 2", width: 160 },
+    { field: "member2Email", headerName: "M2 Email", width: 200 },
+    { field: "member2Phone", headerName: "M2 Phone", width: 150 },
     { field: "member2Tshirt", headerName: "M2 Size", width: 100 },
+
     { field: "email", headerName: "Login Email", width: 200 },
-    { field: "ideaDescription", headerName: "Idea", width: 300 },
+
+    {
+      field: "ideaDescription",
+      headerName: "Idea",
+      width: 350,
+    },
+
     {
       field: "actions",
       headerName: "Action",
@@ -209,7 +225,7 @@ export default function AdminPage() {
       >
         <Typography variant="h4">Admin Panel</Typography>
 
-        <Button color="error" onClick={handleLogout}>
+        <Button color="error" variant="outlined" onClick={handleLogout}>
           Logout
         </Button>
       </Box>
@@ -360,9 +376,7 @@ export default function AdminPage() {
                     label="Rule Text"
                     fullWidth
                     value={form.text || ""}
-                    onChange={(e) =>
-                      setForm({ ...form, text: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, text: e.target.value })}
                   />
                 </Grid>
               )}

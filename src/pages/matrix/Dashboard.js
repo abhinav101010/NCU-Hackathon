@@ -72,17 +72,30 @@ export default function Dashboard() {
       return;
     }
 
+    if (!team.member1Email || !team.member2Email) {
+      alert("Member emails are required");
+      return;
+    }
+
     const payload = {
       teamName: team.teamName,
       teamLead: team.teamLead,
       phone: team.phone,
       university: team.university,
       yearCourse: team.yearCourse,
+
       member1: team.member1,
+      member1Email: team.member1Email,
+      member1Phone: team.member1Phone,
+
       member2: team.member2,
+      member2Email: team.member2Email,
+      member2Phone: team.member2Phone,
+
       teamLeadTshirt: team.teamLeadTshirt,
       member1Tshirt: team.member1Tshirt,
       member2Tshirt: team.member2Tshirt,
+
       selectedTheme: team.selectedTheme,
       ideaDescription: team.ideaDescription,
       email: team.email,
@@ -336,6 +349,30 @@ export default function Dashboard() {
             </Grid>
 
             <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Member 1 Email"
+                value={team.member1Email || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("member1Email", e.target.value)
+                }
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Member 1 Phone"
+                value={team.member1Phone || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("member1Phone", e.target.value)
+                }
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth disabled={!editing}>
                 <InputLabel>Member 1 T-Shirt</InputLabel>
                 <Select
@@ -361,6 +398,30 @@ export default function Dashboard() {
                 value={team.member2 || ""}
                 disabled={!editing}
                 onChange={(e) => handleFieldChange("member2", e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Member 2 Email"
+                value={team.member2Email || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("member2Email", e.target.value)
+                }
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Member 2 Phone"
+                value={team.member2Phone || ""}
+                disabled={!editing}
+                onChange={(e) =>
+                  handleFieldChange("member2Phone", e.target.value)
+                }
               />
             </Grid>
 
