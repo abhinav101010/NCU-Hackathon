@@ -20,41 +20,42 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { API } from "../../utils/common";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminPage() {
+  const navigate = useNavigate();
+
   const [tab, setTab] = useState(0);
   const [data, setData] = useState([]);
   const [registrations, setRegistrations] = useState([]);
+
   const [form, setForm] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [image, setImage] = useState(null);
+
   const names = ["themes", "events", "rules", "sponsors"];
   const currentName = names[tab];
 
   const tiers = ["Silver", "Gold", "Platinum", "Co-Title", "Title"];
 
+  // ================= REGISTRATION TABLE =================
+
   const columns = [
     { field: "teamId", headerName: "Team ID", width: 120 },
     { field: "teamName", headerName: "Team Name", width: 180 },
     { field: "selectedTheme", headerName: "Theme", width: 180 },
-
     { field: "teamLead", headerName: "Team Lead", width: 160 },
     { field: "teamLeadTshirt", headerName: "TL Size", width: 100 },
-
     { field: "teamLeadEmail", headerName: "Lead Email", width: 200 },
     { field: "phone", headerName: "Phone", width: 140 },
     { field: "university", headerName: "University", width: 180 },
     { field: "yearCourse", headerName: "Year & Course", width: 160 },
-
     { field: "member1", headerName: "Member 1", width: 160 },
     { field: "member1Tshirt", headerName: "M1 Size", width: 100 },
-
     { field: "member2", headerName: "Member 2", width: 160 },
     { field: "member2Tshirt", headerName: "M2 Size", width: 100 },
-
     { field: "email", headerName: "Login Email", width: 200 },
     { field: "ideaDescription", headerName: "Idea", width: 300 },
-
     {
       field: "actions",
       headerName: "Action",
@@ -70,7 +71,7 @@ export default function AdminPage() {
     },
   ];
 
-  // ================= LOAD =================
+  // ================= LOAD DATA =================
 
   const loadData = async () => {
     const res = await fetch(`${API}/api/${currentName}`);
@@ -85,14 +86,11 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    if (tab === 4) {
-      loadRegistrations();
-    } else {
-      loadData();
-    }
+    if (tab === 4) loadRegistrations();
+    else loadData();
   }, [tab]);
 
-  // ================= CREATE / UPDATE =================
+  // ================= SUBMIT =================
 
   const handleSubmit = async () => {
     const method = editingId ? "PUT" : "POST";
@@ -104,9 +102,7 @@ export default function AdminPage() {
     if (currentName === "rules") {
       await fetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: form.text }),
       });
     } else {
@@ -118,9 +114,7 @@ export default function AdminPage() {
         }
       });
 
-      if (image) {
-        formData.append("img", image);
-      }
+      if (image) formData.append("img", image);
 
       await fetch(url, {
         method,
@@ -150,11 +144,17 @@ export default function AdminPage() {
   const handleEdit = (item) => {
     setEditingId(item._id);
 
-    if (currentName === "rules") {
-      setForm({ text: item.text });
-    } else {
-      setForm(item);
+    let problemText = item.problemStatements || "";
+
+    if (Array.isArray(problemText)) {
+      problemText = problemText.join("\n");
     }
+
+    setForm({
+      ...item,
+      problemStatements: problemText,
+      days: item.days ? JSON.stringify(item.days, null, 2) : "",
+    });
 
     setImage(null);
   };
@@ -169,90 +169,52 @@ export default function AdminPage() {
     loadRegistrations();
   };
 
-  // ================= Download CSV ====================
+  // ================= CSV =================
+
   const downloadCSV = () => {
     if (!registrations.length) return;
 
-    const headers = [
-      "Team ID",
-      "Team Name",
-      "Theme",
-      "Team Lead",
-      "TL Shirt Size",
-      "Lead Email",
-      "Phone",
-      "University",
-      "Year & Course",
-      "Member 1",
-      "M1 Shirt Size",
-      "Member 2",
-      "M2 Shirt Size",
-      "Login Email",
-      "Idea Description",
-    ];
+    const headers = Object.keys(registrations[0]);
+    const rows = registrations.map((r) => headers.map((h) => r[h]));
 
-    const rows = registrations.map((r) => [
-      r.teamId,
-      r.teamName,
-      r.selectedTheme,
-      r.teamLead,
-      r.teamLeadTshirt,
-      r.teamLeadEmail,
-      r.phone,
-      r.university,
-      r.yearCourse,
-      r.member1,
-      r.member1Tshirt,
-      r.member2,
-      r.member2Tshirt,
-      r.email,
-      r.ideaDescription,
-    ]);
-
-    const csvContent = [headers, ...rows]
+    const csv = [headers, ...rows]
       .map((row) => row.map((v) => `"${v || ""}"`).join(","))
       .join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
+    const blob = new Blob([csv]);
     const link = document.createElement("a");
+
     link.href = URL.createObjectURL(blob);
     link.download = "registrations.csv";
     link.click();
   };
 
-  // ================= Size Summary ================
-  const getSizeSummary = () => {
-    const summary = {
-      XS: 0,
-      S: 0,
-      M: 0,
-      L: 0,
-      XL: 0,
-      XXL: 0,
-    };
+  // ================= LOGOUT =================
 
-    registrations.forEach((r) => {
-      if (summary[r.teamLeadTshirt] !== undefined) summary[r.teamLeadTshirt]++;
-
-      if (summary[r.member1Tshirt] !== undefined) summary[r.member1Tshirt]++;
-
-      if (summary[r.member2Tshirt] !== undefined) summary[r.member2Tshirt]++;
-    });
-
-    return summary;
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    navigate("/admin/login");
   };
-  const sizeSummary = getSizeSummary();
 
   // ================= UI =================
 
   return (
     <Container sx={{ mt: 10 }}>
-      <Typography variant="h4" gutterBottom>
-        Admin Panel
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4">Admin Panel</Typography>
 
-      <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+        <Button color="error" onClick={handleLogout}>
+          Logout
+        </Button>
+      </Box>
+
+      <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mt: 3 }}>
         <Tab label="Themes" />
         <Tab label="Events" />
         <Tab label="Rules" />
@@ -260,17 +222,52 @@ export default function AdminPage() {
         <Tab label="Registrations" />
       </Tabs>
 
-      {/* ================= CRUD SECTION ================= */}
+      {/* ================= FORMS ================= */}
 
       {tab !== 4 && (
         <>
-          <Box mt={3}>
+          <Box mt={4}>
             <Grid container spacing={2}>
-              {(currentName === "themes" || currentName === "events") && (
+              {/* THEMES */}
+
+              {currentName === "themes" && (
+                <>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Theme Title"
+                      fullWidth
+                      value={form.title || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, title: e.target.value })
+                      }
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Problem Statements (one per line)"
+                      multiline
+                      rows={6}
+                      fullWidth
+                      value={form.problemStatements || ""}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          problemStatements: e.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+                </>
+              )}
+
+              {/* EVENTS */}
+
+              {currentName === "events" && (
                 <>
                   <Grid item xs={4}>
                     <TextField
-                      label="Title"
+                      label="Event Title"
                       fullWidth
                       value={form.title || ""}
                       onChange={(e) =>
@@ -281,33 +278,31 @@ export default function AdminPage() {
 
                   <Grid item xs={4}>
                     <TextField
-                      label="Description"
+                      label="Event Date"
                       fullWidth
-                      multiline
-                      rows={3}
-                      value={form.desc || ""}
+                      value={form.date || ""}
                       onChange={(e) =>
-                        setForm({ ...form, desc: e.target.value })
+                        setForm({ ...form, date: e.target.value })
                       }
                     />
                   </Grid>
 
-                  {currentName === "events" && (
-                    <Grid item xs={4}>
-                      <TextField
-                        label="Event Date"
-                        fullWidth
-                        value={form.date || ""}
-                        onChange={(e) =>
-                          setForm({ ...form, date: e.target.value })
-                        }
-                      />
-                    </Grid>
-                  )}
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Schedule JSON"
+                      multiline
+                      rows={10}
+                      fullWidth
+                      value={form.days || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, days: e.target.value })
+                      }
+                    />
+                  </Grid>
                 </>
               )}
 
-              {/* SPONSOR FIELDS */}
+              {/* SPONSORS */}
 
               {currentName === "sponsors" && (
                 <>
@@ -327,9 +322,6 @@ export default function AdminPage() {
                       select
                       label="Tier"
                       fullWidth
-                      sx={{
-                        minWidth: 150,
-                      }}
                       value={form.tier || ""}
                       onChange={(e) =>
                         setForm({ ...form, tier: e.target.value })
@@ -345,29 +337,22 @@ export default function AdminPage() {
                 </>
               )}
 
-              {/* IMAGE FIELD */}
+              {/* IMAGE */}
 
               {currentName !== "rules" && (
                 <Grid item xs={4}>
                   <Button variant="outlined" component="label" fullWidth>
                     Upload Image
                     <input
-                      type="file"
                       hidden
-                      accept="image/*"
+                      type="file"
                       onChange={(e) => setImage(e.target.files[0])}
                     />
                   </Button>
-
-                  {image && (
-                    <Typography sx={{ mt: 1, fontSize: 12 }}>
-                      {image.name}
-                    </Typography>
-                  )}
                 </Grid>
               )}
 
-              {/* RULES FIELD */}
+              {/* RULES */}
 
               {currentName === "rules" && (
                 <Grid item xs={6}>
@@ -375,13 +360,15 @@ export default function AdminPage() {
                     label="Rule Text"
                     fullWidth
                     value={form.text || ""}
-                    onChange={(e) => setForm({ ...form, text: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, text: e.target.value })
+                    }
                   />
                 </Grid>
               )}
             </Grid>
 
-            <Box mt={2}>
+            <Box mt={3}>
               <Button variant="contained" onClick={handleSubmit}>
                 {editingId ? "Update" : "Add"}
               </Button>
@@ -397,7 +384,6 @@ export default function AdminPage() {
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
                   }}
                 >
                   <Box>
@@ -406,30 +392,6 @@ export default function AdminPage() {
                         ? item.text
                         : item.title || item.name}
                     </Typography>
-
-                    {item.desc && (
-                      <Typography color="gray">{item.desc}</Typography>
-                    )}
-
-                    {item.date && (
-                      <Typography color="gray" sx={{ fontSize: 12 }}>
-                        {item.date}
-                      </Typography>
-                    )}
-
-                    {/* SHOW TIER */}
-
-                    {currentName === "sponsors" && item.tier && (
-                      <Typography
-                        sx={{
-                          fontSize: 12,
-                          color: "primary.main",
-                          mt: 0.5,
-                        }}
-                      >
-                        Tier: {item.tier}
-                      </Typography>
-                    )}
                   </Box>
 
                   <Box>
@@ -451,32 +413,15 @@ export default function AdminPage() {
         </>
       )}
 
-      {/* ================= REGISTRATION TABLE ================= */}
+      {/* ================= REGISTRATIONS ================= */}
 
       {tab === 4 && (
         <Paper sx={{ mt: 4, height: 600 }}>
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Typography variant="h6">Registrations</Typography>
-            <Box mt={4} mb={2}>
-              <Grid container spacing={2}>
-                {Object.entries(sizeSummary).map(([size, count]) => (
-                  <Grid item key={size}>
-                    <Card sx={{ px: 3, py: 1, textAlign: "center" }}>
-                      <Typography variant="h6">
-                        {size} : {count}
-                      </Typography>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
 
             <Box>
-              <Button
-                startIcon={<RefreshIcon />}
-                onClick={loadRegistrations}
-                sx={{ mr: 2 }}
-              >
+              <Button startIcon={<RefreshIcon />} onClick={loadRegistrations}>
                 Refresh
               </Button>
 
@@ -491,14 +436,7 @@ export default function AdminPage() {
             columns={columns}
             getRowId={(row) => row._id}
             pageSizeOptions={[10, 25, 50]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            disableRowSelectionOnClick
             slots={{ toolbar: GridToolbar }}
-            sx={{
-              border: "none",
-            }}
           />
         </Paper>
       )}

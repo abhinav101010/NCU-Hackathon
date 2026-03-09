@@ -1,6 +1,6 @@
 export const API = process.env.REACT_APP_API_URL;
 
-export const hackathonDate = new Date("2026-02-26T00:00:00");
+export const hackathonDate = new Date("2026-03-26T00:00:00");
 
 export const calculateTimeLeft = () => {
   const diff = hackathonDate - new Date();

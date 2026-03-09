@@ -134,7 +134,7 @@ export default function RegistrationForm() {
       newErrors.member2 = "Members must be different";
 
     if (!validatePassword(formData.password))
-      newErrors.password = "Password must contain letters and numbers";
+      newErrors.password = "Password must contain only letters and numbers";
 
     setErrors(newErrors);
 
@@ -521,7 +521,7 @@ export default function RegistrationForm() {
 
                   <TextField
                     fullWidth
-                    label="Login Email"
+                    label="Login Username"
                     margin="normal"
                     sx={inputStyle}
                     value={formData.email}

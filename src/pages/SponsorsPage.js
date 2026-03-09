@@ -7,11 +7,18 @@ import {
   Button,
   Paper,
   CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { API } from "../utils/common.js";
+import logo from "../utils/logo.png";
 
 export default function SponsorsPage() {
   const theme = useTheme();
@@ -25,6 +32,49 @@ export default function SponsorsPage() {
     { title: "Platinum Sponsor", tier: "platinum" },
     { title: "Co-Title Sponsor", tier: "co-title" },
     { title: "Title Sponsor", tier: "title" },
+  ];
+
+  const benefits = [
+    {
+      name: "Logo on Website",
+      tiers: ["Silver", "Gold", "Platinum", "Co-Title", "Title"],
+    },
+    {
+      name: "Social Media Promotion",
+      tiers: ["Silver", "Gold", "Platinum", "Co-Title", "Title"],
+    },
+    {
+      name: "Logo on Social Media",
+      tiers: ["Gold", "Platinum", "Co-Title", "Title"],
+    },
+    {
+      name: "Logo on Certificates",
+      tiers: ["Platinum", "Co-Title", "Title"],
+    },
+    {
+      name: "Speaker Opportunity",
+      tiers: ["Platinum", "Co-Title", "Title"],
+    },
+    {
+      name: "Product Demo Booth",
+      tiers: ["Co-Title", "Title"],
+    },
+    {
+      name: "Branding During Hackathon",
+      tiers: ["Platinum", "Co-Title", "Title"],
+    },
+    {
+      name: "Judge Final Round",
+      tiers: ["Co-Title", "Title"],
+    },
+    {
+      name: "Keynote Address",
+      tiers: ["Title"],
+    },
+    {
+      name: "Exclusive Branding",
+      tiers: ["Title"],
+    },
   ];
 
   const contacts = [
@@ -191,7 +241,19 @@ export default function SponsorsPage() {
                             : "rgba(255,255,255,0.05)",
                       }}
                     >
-                      Logo
+                      {/* <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      </Box> */}
+                      <img
+                        src={logo}
+                        alt="Innovathon Logo"
+                        style={{ height: 65 }}
+                      />
                     </Box>
 
                     <Typography
@@ -284,6 +346,57 @@ export default function SponsorsPage() {
         )}
       </Box>
 
+      {/* Sponsorship Benefits Table */}
+
+      <TableContainer
+        component={Paper}
+        sx={{
+          mt: 5,
+          borderRadius: 3,
+          border: `1px solid ${theme.palette.primary.main}40`,
+          backdropFilter: "blur(10px)",
+          background:
+            theme.palette.mode === "light" ? "#fff" : "rgba(255,255,255,0.04)",
+        }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold" }}>Benefits</TableCell>
+
+              {sponsorsTier.map((tier) => (
+                <TableCell key={tier.tier} align="center">
+                  {tier.title}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {benefits.map((benefit, index) => (
+              <TableRow key={index}>
+                <TableCell>{benefit.name}</TableCell>
+
+                {sponsorsTier.map((tier) => {
+                  const hasBenefit = benefit.tiers.includes(tier.title.replace(" Sponsor", ""))
+
+                  return (
+                    <TableCell key={tier} align="center">
+                      {hasBenefit ? (
+                        <Typography color="success.main" fontWeight="bold">
+                          ✔
+                        </Typography>
+                      ) : (
+                        <Typography color="text.disabled">—</Typography>
+                      )}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       {/* Become Sponsor Section */}
 
       <Box

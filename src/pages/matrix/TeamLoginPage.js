@@ -5,6 +5,8 @@ import {
   TextField,
   Button,
   Paper,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../utils/common";
@@ -17,8 +19,20 @@ export default function TeamLoginPage() {
     password: "",
   });
 
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleLogin = async () => {
+    setError("");
+
+    if (!form.email || !form.password) {
+      setError("Please enter email and password.");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const res = await fetch(`${API}/api/registrations/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,7 +42,8 @@ export default function TeamLoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        setError(data.message || "Login failed");
+        setLoading(false);
         return;
       }
 
@@ -36,8 +51,16 @@ export default function TeamLoginPage() {
 
       navigate("/dashboard");
     } catch (err) {
-      alert("Server error");
-      console.log(err);
+      console.error(err);
+      setError("Server error. Please try again.");
+    }
+
+    setLoading(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -50,16 +73,23 @@ export default function TeamLoginPage() {
         alignItems: "center",
       }}
     >
-      <Paper sx={{ p: 5, width: 350 }}>
+      <Paper sx={{ p: 5, width: 360 }}>
         <Typography variant="h5" mb={3}>
           Team Login
         </Typography>
 
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
         <TextField
           fullWidth
-          label="Email"
+          label="Login Username"
           margin="normal"
           value={form.email}
+          onKeyDown={handleKeyPress}
           onChange={(e) =>
             setForm({ ...form, email: e.target.value })
           }
@@ -71,6 +101,7 @@ export default function TeamLoginPage() {
           type="password"
           margin="normal"
           value={form.password}
+          onKeyDown={handleKeyPress}
           onChange={(e) =>
             setForm({ ...form, password: e.target.value })
           }
@@ -81,8 +112,13 @@ export default function TeamLoginPage() {
           variant="contained"
           sx={{ mt: 3 }}
           onClick={handleLogin}
+          disabled={loading}
         >
-          Login
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Login"
+          )}
         </Button>
       </Paper>
     </Box>

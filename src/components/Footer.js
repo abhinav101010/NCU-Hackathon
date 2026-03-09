@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
-
+import logo from "../utils/logo.png";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import EmailIcon from "@mui/icons-material/Email";
@@ -34,16 +34,26 @@ export default function Footer() {
       <Grid container spacing={5}>
         {/* Brand */}
         <Grid item xs={12} md={4}>
-          <Typography
-            variant="h5"
+          <Box
             sx={{
-              fontWeight: "bold",
-              color: theme.palette.primary.main,
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
               mb: 2,
             }}
           >
-            INNOVATHON 2026
-          </Typography>
+            <img src={logo} alt="Innovathon Logo" style={{ height: 65 }} />
+
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: "bold",
+                color: theme.palette.primary.main,
+              }}
+            >
+              INNOVATHON 2026
+            </Typography>
+          </Box>
 
           <Typography
             variant="body2"
@@ -52,9 +62,8 @@ export default function Footer() {
               maxWidth: 350,
             }}
           >
-            Build. Innovate. Transform the future. Join developers,
-            designers, and innovators for a 56-hour journey of
-            creativity and technology.
+            Build. Innovate. Transform the future. Join developers, designers,
+            and innovators for a 56-hour journey of creativity and technology.
           </Typography>
         </Grid>
 
@@ -91,9 +100,7 @@ export default function Footer() {
 
           <Box display="flex" alignItems="center" gap={1} mb={1}>
             <LocationOnIcon fontSize="small" />
-            <Typography variant="body2">
-              The NorthCap University
-            </Typography>
+            <Typography variant="body2">The NorthCap University</Typography>
           </Box>
 
           <Typography

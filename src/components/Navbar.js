@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import logo from "../utils/logo.svg"
+import logo from "../utils/logo.png";
 import { calculateTimeLeft } from "../utils/common";
 
 export default function Navbar({ themeName, setThemeName }) {
@@ -50,7 +50,8 @@ export default function Navbar({ themeName, setThemeName }) {
               gap: 1,
             }}
           >
-            <img src={logo} alt="Innovathon Logo" style={{ height: 32 }} />
+            <img src={logo} alt="Innovathon Logo" style={{ height: 45 }} />{" "}
+            INNOVATHON
           </Box>
         </Typography>
 
@@ -94,6 +95,18 @@ export default function Navbar({ themeName, setThemeName }) {
 
         <Button component={Link} to="/contact" color="inherit">
           Contact
+        </Button>
+
+        {/* Login Button */}
+        <Button
+          disabled={calculateTimeLeft().expired}
+          component={Link}
+          to="/login"
+          variant="outlined"
+          color="secondary"
+          sx={{ ml: 2, fontWeight: "bold" }}
+        >
+          Login
         </Button>
 
         {/* Register Button */}

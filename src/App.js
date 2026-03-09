@@ -1,5 +1,5 @@
 import { ThemeProvider, CssBaseline, Box } from "@mui/material";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { darkNeon, lightTheme, studentTheme } from "./theme";
 
@@ -28,6 +28,8 @@ import TeamLoginPage from "./pages/matrix/TeamLoginPage";
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const adminToken = localStorage.getItem("adminToken");
+  const teamToken = localStorage.getItem("teamToken");
 
   const [themeName, setThemeName] = useState(
     localStorage.getItem("theme") || "light",
@@ -45,6 +47,15 @@ function App() {
     localStorage.setItem("theme", themeName);
   }, [themeName]);
 
+  useEffect(() => {
+    // if (adminToken && location.pathname === "/admin/login") {
+    //   window.location.href = "/admin";
+    // }
+
+    if (teamToken && location.pathname === "/login") {
+      window.location.href = "/dashboard";
+    }
+  }, [location.pathname]);
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
@@ -54,7 +65,7 @@ function App() {
 
       <Box sx={{ position: "relative", zIndex: 1 }}>
         <Navbar themeName={themeName} setThemeName={setThemeName} />
-        <ScrollToTop/>
+        <ScrollToTop />
         <Routes>
           {/* PUBLIC ROUTES */}
           <Route path="/" element={<HomePage />} />
@@ -68,28 +79,44 @@ function App() {
           <Route path="/sponsors" element={<SponsorsPage />} />
 
           {/* ADMIN LOGIN */}
-          <Route path="/admin/login" element={<LoginPage />} />
+          <Route
+            path="/admin/login"
+            element={adminToken ? <Navigate to="/admin" /> : <LoginPage />}
+          />
 
           {/* PROTECTED ADMIN */}
           <Route
             path="/admin"
             element={
-              <ProtectedAdminRoute>
-                <AdminPage />
-              </ProtectedAdminRoute>
+              adminToken ? (
+                <ProtectedAdminRoute>
+                  <AdminPage />
+                </ProtectedAdminRoute>
+              ) : (
+                <Navigate to="/admin/login" />
+              )
             }
           />
 
           {/* TEAM LOGIN */}
-          <Route path="/login" element={<TeamLoginPage />} />
+          <Route
+            path="/login"
+            element={
+              teamToken ? <Navigate to="/dashboard" /> : <TeamLoginPage />
+            }
+          />
 
           {/* TEAM DASHBOARD */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedTeamRoute>
-                <Dashboard />
-              </ProtectedTeamRoute>
+              teamToken ? (
+                <ProtectedTeamRoute>
+                  <Dashboard />
+                </ProtectedTeamRoute>
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
         </Routes>
