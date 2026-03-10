@@ -3,7 +3,6 @@
 # dependencies
 /node_modules
 /src/server/node_modules
-/src/server/server.js
 /src/server/createAdmin.js
 /src/server/seeds.js
 /.pnp
