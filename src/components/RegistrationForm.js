@@ -259,6 +259,7 @@ export default function RegistrationForm() {
           sx={{
             minHeight: "90vh",
             display: "flex",
+            flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -271,7 +272,7 @@ export default function RegistrationForm() {
             <Box
               sx={{
                 width: "100%",
-                p: 4,
+                p: { xs: 2, sm: 4 },
                 borderRadius: 3,
                 background: (theme) => theme.palette.background.paper,
                 border: (theme) => `1px solid ${theme.palette.divider}`,
@@ -288,6 +289,8 @@ export default function RegistrationForm() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexWrap: "wrap",
+                  gap: { xs: 1, sm: 0 },
                   mb: 4,
                 }}
               >
@@ -297,13 +300,14 @@ export default function RegistrationForm() {
 
                     <Box
                       sx={{
-                        width: 34,
-                        height: 34,
+                        width: { xs: 28, sm: 34 },
+                        height: { xs: 28, sm: 34 },
                         borderRadius: "50%",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         fontWeight: 600,
+                        fontSize: { xs: 13, sm: 14 },
                         border: (theme) =>
                           `2px solid ${theme.palette.primary.main}`,
                         background: (theme) =>
@@ -325,9 +329,9 @@ export default function RegistrationForm() {
                     {index < 3 && (
                       <Box
                         sx={{
-                          width: 60,
+                          width: { xs: 30, sm: 60 },
                           height: 2,
-                          mx: 1,
+                          mx: { xs: 0.5, sm: 1 },
                           background: (theme) =>
                             step > index + 1
                               ? theme.palette.primary.main
@@ -356,7 +360,7 @@ export default function RegistrationForm() {
                   />
 
                   <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={8}>
+                    <Grid item xs={12} sm={8}>
                       <TextField
                         fullWidth
                         label="Team Lead Name"
@@ -374,7 +378,7 @@ export default function RegistrationForm() {
                       />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    <Grid item xs={12} sm={4}>
                       <TextField
                         select
                         fullWidth
@@ -468,7 +472,7 @@ export default function RegistrationForm() {
                   </Typography>
 
                   <Grid container spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item xs={12} sm={8}>
                       <TextField
                         fullWidth
                         label="Team Mate 1"
@@ -514,7 +518,7 @@ export default function RegistrationForm() {
                       />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    <Grid item xs={12} sm={4}>
                       <TextField
                         fullWidth
                         select
@@ -539,7 +543,7 @@ export default function RegistrationForm() {
                   </Grid>
 
                   <Grid container spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item xs={12} sm={8}>
                       <TextField
                         fullWidth
                         label="Team Mate 2"
@@ -585,7 +589,7 @@ export default function RegistrationForm() {
                       />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    <Grid item xs={12} sm={4}>
                       <TextField
                         fullWidth
                         select
@@ -630,7 +634,14 @@ export default function RegistrationForm() {
                     onChange={(e) => updateField("password", e.target.value)}
                   />
 
-                  <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      gap: 2,
+                      mt: 3,
+                    }}
+                  >
                     <Button
                       fullWidth
                       variant="outlined"
@@ -786,7 +797,7 @@ export default function RegistrationForm() {
                       component="img"
                       src="/payment-qr.png"
                       sx={{
-                        width: 220,
+                        width: { xs: 180, sm: 220 },
                         maxWidth: "100%",
                         borderRadius: 2,
                       }}

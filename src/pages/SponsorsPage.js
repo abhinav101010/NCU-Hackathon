@@ -116,6 +116,7 @@ export default function SponsorsPage() {
 
       <Typography
         variant="h3"
+        mt={15}
         sx={{
           textAlign: "center",
           fontWeight: "bold",

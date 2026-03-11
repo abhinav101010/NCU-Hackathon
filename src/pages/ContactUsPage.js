@@ -40,6 +40,7 @@ export default function ContactUsPage() {
       <Typography
         variant="h3"
         textAlign="center"
+        mt={4}
         sx={{
           mb: 6,
           fontWeight: "bold",

@@ -20,14 +20,14 @@ const words = [
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const theme = useTheme();
+
   const [wordIndex, setWordIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const theme = useTheme();
 
   useEffect(() => {
     const currentWord = words[wordIndex];
-
     let timeout;
 
     if (!isDeleting && displayedText.length < currentWord.length) {
@@ -35,9 +35,7 @@ export default function HomePage() {
         setDisplayedText(currentWord.slice(0, displayedText.length + 1));
       }, 90);
     } else if (!isDeleting && displayedText.length === currentWord.length) {
-      timeout = setTimeout(() => {
-        setIsDeleting(true);
-      }, 1200);
+      timeout = setTimeout(() => setIsDeleting(true), 1200);
     } else if (isDeleting && displayedText.length > 0) {
       timeout = setTimeout(() => {
         setDisplayedText(currentWord.slice(0, displayedText.length - 1));
@@ -56,7 +54,8 @@ export default function HomePage() {
         maxWidth="lg"
         sx={{
           minHeight: "100vh",
-          pt: 12,
+          pt: { xs: 10, md: 14 },
+          px: 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -64,14 +63,18 @@ export default function HomePage() {
           textAlign: "center",
         }}
       >
-        {/* Hackathon Title */}
+        {/* Title */}
         <Typography
-          variant="h4"
           sx={{
             mb: 2,
-            letterSpacing: 4,
+            letterSpacing: { xs: 2, md: 4 },
             fontWeight: "bold",
             color: theme.palette.primary.main,
+            fontSize: {
+              xs: "1.2rem",
+              sm: "1.5rem",
+              md: "2rem",
+            },
           }}
         >
           INNOVATHON 2026
@@ -79,10 +82,16 @@ export default function HomePage() {
 
         {/* Main Heading */}
         <Typography
-          variant="h2"
           sx={{
             fontWeight: "bold",
             mb: 2,
+            lineHeight: 1.2,
+            fontSize: {
+              xs: "2rem",
+              sm: "2.6rem",
+              md: "3.5rem",
+              lg: "4rem",
+            },
           }}
         >
           BUILD{" "}
@@ -110,11 +119,15 @@ export default function HomePage() {
 
         {/* Hackathon Info */}
         <Typography
-          variant="body1"
           sx={{
             color: theme.palette.primary.main,
             mb: 2,
             fontWeight: "bold",
+            fontSize: {
+              xs: "0.8rem",
+              sm: "0.9rem",
+              md: "1rem",
+            },
           }}
         >
           56 Hour Hackathon • ₹50k+ Prize Pool • 500+ Participants
@@ -126,23 +139,44 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <Typography variant="h6" sx={{ color: "gray", maxWidth: 600, mb: 4 }}>
+          <Typography
+            sx={{
+              color: "gray",
+              maxWidth: 600,
+              mb: 4,
+              px: 2,
+              fontSize: {
+                xs: "0.9rem",
+                sm: "1rem",
+                md: "1.1rem",
+              },
+            }}
+          >
             Join visionary developers, designers, and innovators to create
-            breakthrough solutions in just 56 hours. Code. Collaborate. Conquer.
+            breakthrough solutions in just 56 hours. Code. Collaborate.
+            Conquer.
           </Typography>
         </motion.div>
 
-        {/* CTA Buttons */}
-        <Box sx={{ mb: 5 }}>
+        {/* Buttons */}
+        <Box
+          sx={{
+            mb: 5,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
           <Button
             variant="contained"
             disabled={calculateTimeLeft().expired}
             onClick={() => navigate("/register")}
             sx={{
-              mr: 2,
               background: "#ff0080",
               fontWeight: "bold",
-              padding: "10px 28px",
+              px: { xs: 3, md: 4 },
+              py: 1.2,
             }}
           >
             Register Now
@@ -155,7 +189,8 @@ export default function HomePage() {
               borderColor: theme.palette.primary.main,
               color: theme.palette.primary.main,
               fontWeight: "bold",
-              padding: "10px 28px",
+              px: { xs: 3, md: 4 },
+              py: 1.2,
             }}
           >
             Explore Themes
