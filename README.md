@@ -73,12 +73,29 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 hackathon
 ├─ .env
 ├─ README.md
+├─ build
+│  ├─ asset-manifest.json
+│  ├─ favicon.ico
+│  ├─ index.html
+│  ├─ logo192.png
+│  ├─ logo512.png
+│  ├─ manifest.json
+│  ├─ robots.txt
+│  └─ static
+│     ├─ css
+│     │  ├─ main.0650a6e3.css
+│     │  └─ main.0650a6e3.css.map
+│     ├─ js
+│     │  ├─ main.37b7ddf5.js
+│     │  ├─ main.37b7ddf5.js.LICENSE.txt
+│     │  └─ main.37b7ddf5.js.map
+│     └─ media
+│        └─ logo.15741714e010679f5d13.png
 ├─ package-lock.json
 ├─ package.json
 ├─ public
 │  ├─ favicon.ico
 │  ├─ index.html
-│  ├─ logo.png
 │  ├─ logo192.png
 │  ├─ logo512.png
 │  ├─ manifest.json
@@ -97,18 +114,12 @@ hackathon
    │  ├─ SectionHeading.js
    │  ├─ Sponsors.js
    │  └─ ThemeCard.js
-   ├─ data-static
-   │  ├─ events.js
-   │  ├─ rules.js
-   │  ├─ sponsors.js
-   │  └─ themes.js
    ├─ index.js
    ├─ pages
    │  ├─ AboutPage.js
    │  ├─ ContactUsPage.js
    │  ├─ EventPage.js
    │  ├─ FAQ.js
-   │  ├─ HackathonUI_Reference.js
    │  ├─ HomePage.js
    │  ├─ RegisterPage.js
    │  ├─ RulePage.js
@@ -152,7 +163,9 @@ hackathon
    │  │  │  ├─ 1772723922366-photo-1551836022-d5d88e9218df.avif
    │  │  │  ├─ 1772723935760-photo-1567427018141-0584cfcbf1b8.avif
    │  │  │  ├─ 1772724002076-photo-1552664730-d307ca884978.avif
-   │  │  │  └─ 1772724010206-photo-1523580846011-d3a5bc25702b.avif
+   │  │  │  ├─ 1772724010206-photo-1523580846011-d3a5bc25702b.avif
+   │  │  │  ├─ 1772968018577-Screenshot_2026-03-08_at_12.56.09â¯PM.png
+   │  │  │  └─ 1772968226826-Screenshot_2026-03-08_at_12.56.09â¯PM.png
    │  │  ├─ sponsors
    │  │  │  ├─ 1772636318638-photo-1511578314322-379afb476865.jpeg
    │  │  │  ├─ 1772687195820-photo-1511578314322-379afb476865.jpeg
@@ -174,10 +187,8 @@ hackathon
    ├─ setupTests.js
    ├─ theme.js
    └─ utils
-      ├─ Gemini_Generated_Image_xaf7qkxaf7qkxaf7.png
       ├─ ScrollToTop.js
       ├─ common.js
-      ├─ logo.png
-      └─ logo2.svg
+      └─ logo.png
 
 ```

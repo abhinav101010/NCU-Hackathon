@@ -37,43 +37,82 @@ export default function SponsorsPage() {
   const benefits = [
     {
       name: "Logo on Website",
-      tiers: ["Silver", "Gold", "Platinum", "Co-Title", "Title"],
+      tiers: {
+        Silver: "yes",
+        Gold: "yes",
+        Platinum: "yes",
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Social Media Promotion",
-      tiers: ["Silver", "Gold", "Platinum", "Co-Title", "Title"],
+      tiers: {
+        Silver: "yes",
+        Gold: "yes",
+        Platinum: "yes",
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Logo on Social Media",
-      tiers: ["Gold", "Platinum", "Co-Title", "Title"],
+      tiers: {
+        Gold: "yes",
+        Platinum: "yes",
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Logo on Certificates",
-      tiers: ["Platinum", "Co-Title", "Title"],
+      tiers: {
+        Platinum: "yes",
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Speaker Opportunity",
-      tiers: ["Platinum", "Co-Title", "Title"],
+      tiers: {
+        Platinum: "yes",
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Branding During Hackathon",
-      tiers: ["Platinum", "Co-Title", "Title"],
+      tiers: {
+        Platinum: "yes",
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Product Demo Booth",
-      tiers: ["Co-Title", "Title"],
+      tiers: {
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Judge Final Round",
-      tiers: ["Co-Title", "Title"],
+      tiers: {
+        "Co-Title": "yes",
+        Title: "yes",
+      },
     },
     {
       name: "Keynote Address",
-      tiers: ["Title"],
+      tiers: {
+        Title: "yes",
+      },
     },
     {
       name: "Exclusive Branding",
-      tiers: ["Title"],
+      tiers: {
+        Title: "yes",
+      },
     },
   ];
 
@@ -379,15 +418,30 @@ export default function SponsorsPage() {
                 <TableCell>{benefit.name}</TableCell>
 
                 {sponsorsTier.map((tier) => {
-                  const hasBenefit = benefit.tiers.includes(tier.title.replace(" Sponsor", ""))
+                  const tierName = tier.title.replace(" Sponsor", "");
+                  const value = benefit.tiers?.[tierName];
 
                   return (
-                    <TableCell key={tier} align="center">
-                      {hasBenefit ? (
+                    <TableCell key={tier.tier} align="center">
+                      {value === "yes" && (
                         <Typography color="success.main" fontWeight="bold">
                           ✔
                         </Typography>
-                      ) : (
+                      )}
+
+                      {(value != "yes" && value) && (
+                        <Typography
+                          sx={{
+                            fontSize: 13,
+                            fontWeight: "bold",
+                            color: "#ffa726",
+                          }}
+                        >
+                          {value}
+                        </Typography>
+                      )}
+
+                      {!value && (
                         <Typography color="text.disabled">—</Typography>
                       )}
                     </TableCell>

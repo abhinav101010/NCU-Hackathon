@@ -40,44 +40,93 @@ export default function Navbar({ themeName, setThemeName }) {
   const drawer = (
     <Box
       sx={{
-        width: 250,
-        p: 2,
+        width: 260,
+        p: 3,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
       }}
       role="presentation"
-      onClick={toggleDrawer}
     >
-      <List>
+      {/* Theme Switch */}
+
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{
+            fontWeight: "bold",
+            color: theme.palette.text.secondary,
+            mb: 0.5,
+          }}
+        >
+          Theme
+        </Typography>
+
+        <Select
+          size="small"
+          fullWidth
+          value={themeName}
+          onChange={(e) => setThemeName(e.target.value)}
+          sx={{
+            borderRadius: 2,
+          }}
+        >
+          <MenuItem value="light">Light</MenuItem>
+          <MenuItem value="dark">Dark Neon</MenuItem>
+          <MenuItem value="student">Student</MenuItem>
+        </Select>
+      </Box>
+
+      {/* Navigation */}
+
+      <List sx={{ py: 0 }}>
         {navLinks.map((item) => (
-          <ListItem button component={Link} to={item.path} key={item.name}>
-            <ListItemText primary={item.name} />
+          <ListItem
+            key={item.name}
+            component={Link}
+            to={item.path}
+            onClick={toggleDrawer}
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                background: `${theme.palette.primary.main}15`,
+              },
+            }}
+          >
+            <ListItemText
+              primary={item.name}
+              primaryTypographyProps={{ fontWeight: 500 }}
+            />
           </ListItem>
         ))}
-
-        <ListItem>
-          <Button
-            component={Link}
-            to="/login"
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 1 }}
-          >
-            Login
-          </Button>
-        </ListItem>
-
-        <ListItem>
-          <Button
-            component={Link}
-            to="/register"
-            variant="contained"
-            fullWidth
-            disabled={calculateTimeLeft().expired}
-            sx={{ mt: 1 }}
-          >
-            Register
-          </Button>
-        </ListItem>
       </List>
+
+      {/* Auth Buttons */}
+
+      <Box sx={{ mt: 1 }}>
+        <Button
+          component={Link}
+          to="/login"
+          variant="outlined"
+          fullWidth
+          sx={{ mb: 1, fontWeight: "bold" }}
+          onClick={toggleDrawer}
+        >
+          Login
+        </Button>
+
+        <Button
+          component={Link}
+          to="/register"
+          variant="contained"
+          fullWidth
+          disabled={calculateTimeLeft().expired}
+          sx={{ fontWeight: "bold" }}
+          onClick={toggleDrawer}
+        >
+          Register
+        </Button>
+      </Box>
     </Box>
   );
 
@@ -86,9 +135,7 @@ export default function Navbar({ themeName, setThemeName }) {
       <AppBar
         position="fixed"
         sx={{
-          background: isLight
-            ? "rgba(255,255,255,0.9)"
-            : "rgba(0,0,0,0.6)",
+          background: isLight ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.6)",
           color: theme.palette.text.primary,
           backdropFilter: "blur(10px)",
           borderBottom: `1px solid ${theme.palette.primary.main}30`,

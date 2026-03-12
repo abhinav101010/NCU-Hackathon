@@ -1,0 +1,319 @@
+[
+  {
+    "day": "Day 1",
+    "title": "Opening & Ideation",
+    "schedule": [
+      {
+        "time": "Morning",
+        "title": "Opening Ceremony",
+        "description": "Welcome session introducing the hackathon theme, rules, judges, mentors, and sponsors.",
+        "_id": "69afc2005ff5b75ec800b86e"
+      },
+      {
+        "time": "Morning",
+        "title": "Registration & Check-in",
+        "description": "Participants complete registration, receive badges, and confirm their participation.",
+        "_id": "69afc2005ff5b75ec800b86f"
+      },
+      {
+        "time": "12:00 PM",
+        "title": "Registration Closes",
+        "description": "Final deadline for participant check-in and team confirmations.",
+        "_id": "69afc2005ff5b75ec800b870"
+      },
+      {
+        "time": "After Registration",
+        "title": "Hackathon Orientation",
+        "description": "Organizers explain problem statements, judging criteria, and event guidelines.",
+        "_id": "69afc2005ff5b75ec800b871"
+      },
+      {
+        "time": "Afternoon",
+        "title": "Team Formation & Idea Discussion",
+        "description": "Participants form teams and discuss possible solutions and project ideas.",
+        "_id": "69afc2005ff5b75ec800b872"
+      },
+      {
+        "time": "Afternoon",
+        "title": "Exploration Time – Incubation Center",
+        "description": "Explore sponsor booths, tech demos, networking areas, and mini activities.",
+        "_id": "69afc2005ff5b75ec800b873"
+      },
+      {
+        "time": "4:30 PM",
+        "title": "First Elimination / Idea Screening",
+        "description": "Teams briefly present their concept and approach to judges for review.",
+        "_id": "69afc2005ff5b75ec800b874"
+      },
+      {
+        "time": "8:30 PM – 9:00 PM",
+        "title": "Dinner",
+        "description": "Dinner break for participants before continuing development sessions.",
+        "_id": "69afc2005ff5b75ec800b875"
+      },
+      {
+        "time": "Night",
+        "title": "Hackathon Work Time",
+        "description": "Teams begin building their solutions and start coding their projects.",
+        "_id": "69afc2005ff5b75ec800b876"
+      }
+    ],
+    "_id": "69afc2005ff5b75ec800b86d"
+  },
+  {
+    "day": "Day 2",
+    "title": "Development & Mentorship",
+    "schedule": [
+      {
+        "time": "12:30 AM",
+        "title": "Midnight Jam Session",
+        "description": "Short break with music, games, and relaxation after long coding hours.",
+        "_id": "69afc2005ff5b75ec800b878"
+      },
+      {
+        "time": "7:00 AM",
+        "title": "Breakfast",
+        "description": "Morning breakfast served to help participants recharge for the day.",
+        "_id": "69afc2005ff5b75ec800b879"
+      },
+      {
+        "time": "10:00 AM",
+        "title": "Round 2 / Progress Review",
+        "description": "Teams present progress updates and working prototypes to mentors.",
+        "_id": "69afc2005ff5b75ec800b87a"
+      },
+      {
+        "time": "Around 12:00 PM",
+        "title": "Elimination Round",
+        "description": "Teams are evaluated based on progress, feasibility, and innovation.",
+        "_id": "69afc2005ff5b75ec800b87b"
+      },
+      {
+        "time": "1:00 PM",
+        "title": "Lunch Break",
+        "description": "Lunch break before continuing development and mentoring sessions.",
+        "_id": "69afc2005ff5b75ec800b87c"
+      },
+      {
+        "time": "Afternoon",
+        "title": "Free Time & Sponsor Activities",
+        "description": "Participants explore sponsor challenges, demos, and networking areas.",
+        "_id": "69afc2005ff5b75ec800b87d"
+      },
+      {
+        "time": "Afternoon",
+        "title": "Hackathon Development Time",
+        "description": "Teams continue developing their solutions and improving prototypes.",
+        "_id": "69afc2005ff5b75ec800b87e"
+      },
+      {
+        "time": "After 6:30 PM",
+        "title": "Jam / Stand-up Comedy Session",
+        "description": "Relaxation session with entertainment to refresh participants.",
+        "_id": "69afc2005ff5b75ec800b87f"
+      },
+      {
+        "time": "8:30 PM – 9:00 PM",
+        "title": "Dinner",
+        "description": "Dinner break before continuing the late-night development phase.",
+        "_id": "69afc2005ff5b75ec800b880"
+      },
+      {
+        "time": "Around 10:00 PM",
+        "title": "Mentor Session",
+        "description": "Industry mentors provide guidance, feedback, and technical advice.",
+        "_id": "69afc2005ff5b75ec800b881"
+      }
+    ],
+    "_id": "69afc2005ff5b75ec800b877"
+  },
+  {
+    "day": "Day 3",
+    "title": "Final Presentations & Closing",
+    "schedule": [
+      {
+        "time": "Night",
+        "title": "Night Development Session",
+        "description": "Final overnight coding session to complete projects and polish demos.",
+        "_id": "69afc2005ff5b75ec800b883"
+      },
+      {
+        "time": "7:00 AM",
+        "title": "Breakfast",
+        "description": "Breakfast served before the final preparation and presentation rounds.",
+        "_id": "69afc2005ff5b75ec800b884"
+      },
+      {
+        "time": "Morning",
+        "title": "Final Preparation Session",
+        "description": "Teams finalize prototypes, prepare presentations, and test demos.",
+        "_id": "69afc2005ff5b75ec800b885"
+      },
+      {
+        "time": "1:00 PM",
+        "title": "Lunch",
+        "description": "Lunch break before the final project demonstration sessions.",
+        "_id": "69afc2005ff5b75ec800b886"
+      },
+      {
+        "time": "2:00 PM",
+        "title": "Project Demonstration & Evaluation",
+        "description": "Teams present their solutions and working prototypes to judges.",
+        "_id": "69afc2005ff5b75ec800b887"
+      },
+      {
+        "time": "Around 4:00 PM",
+        "title": "Closing Ceremony / Results",
+        "description": "Winners announced, prizes distributed, and hackathon officially ends.",
+        "_id": "69afc2005ff5b75ec800b888"
+      }
+    ],
+    "_id": "69afc2005ff5b75ec800b882"
+  }
+]
+
+[
+  {
+    "day": "Day 1",
+    "title": "Opening & Ideation",
+    "schedule": [
+      {
+        "time": "Morning",
+        "title": "Opening Ceremony",
+        "description": "The hackathon begins with a welcome address introducing the event theme, rules, judges, mentors, and sponsors."
+      },
+      {
+        "time": "Morning",
+        "title": "Registration & Check-in",
+        "description": "Participants complete registration, receive entry badges, and get event information."
+      },
+      {
+        "time": "12:00 PM",
+        "title": "Registration Closes",
+        "description": "Final deadline for participant registration and check-in."
+      },
+      {
+        "time": "After Registration",
+        "title": "Hackathon Orientation",
+        "description": "Participants are guided about problem statements, judging criteria, and hackathon rules."
+      },
+      {
+        "time": "Afternoon",
+        "title": "Team Formation & Idea Discussion",
+        "description": "Participants form teams and brainstorm ideas for their hackathon projects."
+      },
+      {
+        "time": "Afternoon",
+        "title": "Exploration Time – Incubation Center",
+        "description": "Participants explore sponsor booths, tech demos, mini-games, and networking activities in the incubation center."
+      },
+      {
+        "time": "4:30 PM",
+        "title": "First Elimination / Idea Screening",
+        "description": "Teams present their initial idea or concept to the judges. Selected teams proceed to the development stage."
+      },
+      {
+        "time": "8:30 PM – 9:00 PM",
+        "title": "Dinner",
+        "description": "Dinner break for participants before continuing with development activities."
+      },
+      {
+        "time": "Night",
+        "title": "Hackathon Work Time",
+        "description": "Teams begin working on their projects by planning, coding, and designing solutions."
+      },
+      {
+        "time": "12:30 AM",
+        "title": "Midnight Jam Session",
+        "description": "A short informal break with music, jokes, and light activities to relax participants."
+      }
+    ]
+  },
+  {
+    "day": "Day 2",
+    "title": "Development & Mentorship",
+    "schedule": [
+      {
+        "time": "7:00 AM",
+        "title": "Breakfast",
+        "description": "Morning breakfast provided by the college for participants."
+      },
+      {
+        "time": "10:00 AM",
+        "title": "Round 2 / Progress Review",
+        "description": "Teams present their progress and working prototype to mentors and judges."
+      },
+      {
+        "time": "Around 12:00 PM",
+        "title": "Elimination Round",
+        "description": "Teams are evaluated based on feasibility, progress, and innovation. Some teams may be eliminated."
+      },
+      {
+        "time": "1:00 PM",
+        "title": "Lunch Break",
+        "description": "Lunch break for participants before continuing development sessions."
+      },
+      {
+        "time": "Afternoon",
+        "title": "Free Time & Sponsor Activities",
+        "description": "Participants can explore sponsor activity zones with fun challenges, tech demos, and networking opportunities."
+      },
+      {
+        "time": "Afternoon",
+        "title": "Hackathon Development Time",
+        "description": "Teams continue developing and improving their project prototypes."
+      },
+      {
+        "time": "After 6:30 PM",
+        "title": "Jam / Stand-up Comedy Session",
+        "description": "Entertainment session to relax participants after long coding hours."
+      },
+      {
+        "time": "8:30 PM – 9:00 PM",
+        "title": "Dinner",
+        "description": "Dinner break before continuing the late-night development phase."
+      },
+      {
+        "time": "Around 10:00 PM",
+        "title": "Mentor Session",
+        "description": "Industry mentors guide teams, give feedback, and help improve technical execution."
+      },
+      {
+        "time": "Night",
+        "title": "Night Development Session",
+        "description": "Teams continue working overnight to complete their projects."
+      }
+    ]
+  },
+  {
+    "day": "Day 3",
+    "title": "Final Presentations & Closing",
+    "schedule": [
+      {
+        "time": "7:00 AM",
+        "title": "Breakfast",
+        "description": "Morning breakfast provided by the college before the final sessions."
+      },
+      {
+        "time": "Morning",
+        "title": "Final Preparation Session",
+        "description": "Teams finalize projects, prepare presentations, and practice demos."
+      },
+      {
+        "time": "1:00 PM",
+        "title": "Lunch",
+        "description": "Lunch break before final project demonstrations."
+      },
+      {
+        "time": "2:00 PM",
+        "title": "Project Demonstration & Final Evaluation",
+        "description": "Teams present their working prototype and pitch their solution to the judges."
+      },
+      {
+        "time": "Around 4:00 PM",
+        "title": "Closing Ceremony / Result Announcement",
+        "description": "Winners are announced, prizes are distributed, and sponsors are acknowledged."
+      }
+    ]
+  }
+]

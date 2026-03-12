@@ -141,7 +141,7 @@ export default function HomePage() {
         >
           <Typography
             sx={{
-              color: "gray",
+              color: theme.palette.text.main,
               maxWidth: 600,
               mb: 4,
               px: 2,
@@ -153,7 +153,7 @@ export default function HomePage() {
             }}
           >
             Join visionary developers, designers, and innovators to create
-            breakthrough solutions in just 56 hours. Code. Collaborate. Conquer.
+            breakthrough solutions in just 56 hours.<br/><b>CODE. COLLABORATE. CONQUER.</b>
           </Typography>
         </motion.div>
 

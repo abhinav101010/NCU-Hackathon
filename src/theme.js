@@ -127,6 +127,7 @@ export const darkNeon = createTheme({
     mode: "dark",
     primary: { main: "#00ffa3" },
     secondary: { main: "#ff0080" },
+    text: {main: "#313131"},
     background: {
       default: "#0a0a0a",
       paper: "rgba(255,255,255,0.05)",
@@ -143,9 +144,27 @@ export const lightTheme = createTheme({
     mode: "light",
     primary: { main: "#1976d2" },
     secondary: { main: "#1565c0" },
+    text: {main: "#313131"},
     background: {
       default: "#f4f7ff",
       paper: "#ffffff",
+    },
+  },
+  typography: {
+    fontFamily: "Inter, sans-serif",
+  },
+  components: baseComponents,
+});
+
+export const studentTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: { main: "#7c4dff" },
+    secondary: { main: "#ffea00" },
+    text: {main: "#fff"},
+    background: {
+      default: "#0f0f1a",
+      paper: "rgba(124,77,255,0.08)",
     },
   },
   typography: {
@@ -187,18 +206,3 @@ export const lightTheme = createTheme({
 //   components: baseComponents,
 // });
 
-export const studentTheme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: { main: "#7c4dff" },
-    secondary: { main: "#ffea00" },
-    background: {
-      default: "#0f0f1a",
-      paper: "rgba(124,77,255,0.08)",
-    },
-  },
-  typography: {
-    fontFamily: "Inter, sans-serif",
-  },
-  components: baseComponents,
-});
