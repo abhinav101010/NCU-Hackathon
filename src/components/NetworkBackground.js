@@ -8,81 +8,85 @@ export default function NetworkBackground() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-
     const primary = theme.palette.primary.main;
+    const isDark = theme.palette.mode === "dark";
 
+    let animId;
     let particles = [];
-    const num = 80;
+    const NUM = 70;
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-
-      // regenerate particles on resize
-      particles = [];
-      for (let i = 0; i < num; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 1,
-          vy: (Math.random() - 0.5) * 1,
-        });
-      }
+      particles = Array.from({ length: NUM }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        r: Math.random() * 1.5 + 0.8,
+      }));
     };
 
     resize();
 
-    function draw() {
+    const hexToRgb = (hex) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `${r},${g},${b}`;
+    };
+
+    const rgb = hexToRgb(primary.length === 7 ? primary : "#00ffa3");
+
+    const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((p, i) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
 
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-        // particle color
-        ctx.fillStyle = primary;
-
+        // dot
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = isDark
+          ? `rgba(${rgb}, 0.55)`
+          : `rgba(${rgb}, 0.35)`;
         ctx.fill();
 
-        // connecting lines
+        // lines
         for (let j = i + 1; j < particles.length; j++) {
-          const dx = p.x - particles[j].x;
-          const dy = p.y - particles[j].y;
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 120) {
+          if (dist < 130) {
+            const alpha = (1 - dist / 130) * (isDark ? 0.18 : 0.12);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-
-            const opacity = 1 - dist / 120;
-
-            ctx.strokeStyle =
-              theme.palette.mode === "light"
-                ? `rgba(0,0,0,${opacity * 0.25})`
-                : `${primary}${Math.floor(opacity * 80).toString(16)}`;
-
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         }
-      });
+      }
 
-      requestAnimationFrame(draw);
-    }
+      animId = requestAnimationFrame(draw);
+    };
 
     draw();
-
     window.addEventListener("resize", resize);
 
     return () => {
+      cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
-  }, [theme]); // re-run when theme changes
+  }, [theme]);
 
   return (
     <canvas
@@ -95,6 +99,7 @@ export default function NetworkBackground() {
         height: "100%",
         zIndex: 0,
         pointerEvents: "none",
+        opacity: 0.85,
       }}
     />
   );

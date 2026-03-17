@@ -1,0 +1,30 @@
+/* body{
+cursor:none;
+} */
+
+/* dragon head */
+
+.dragon-head{
+position:fixed;
+width:12px;
+height:12px;
+border-radius:50%;
+pointer-events:none;
+transform:translate(-50%,-50%);
+z-index:10000;
+box-shadow:0 0 10px currentColor;
+}
+
+/* dragon body */
+
+.dragon-segment{
+position:fixed;
+width:10px;
+height:10px;
+border-radius:50%;
+background:currentColor;
+pointer-events:none;
+transform:translate(-50%,-50%);
+z-index:9999;
+transition:opacity 0.2s;
+}

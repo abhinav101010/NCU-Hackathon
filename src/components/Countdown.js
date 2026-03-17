@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { calculateTimeLeft } from "../utils/common";
+import { calculateTimeLeft, hackathonDate } from "../utils/common";
 
 export default function Countdown() {
   const theme = useTheme();
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
+  const formattedDeadline = hackathonDate.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   useEffect(() => {
     const interval = setInterval(() => {
       const time = calculateTimeLeft();
       setTimeLeft(time);
 
-      if (time.expired) {
-        clearInterval(interval);
-      }
+      if (time.expired) clearInterval(interval);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -23,34 +27,37 @@ export default function Countdown() {
 
   const units = ["days", "hours", "minutes", "seconds"];
 
-  /* 🔴 SHOW THIS WHEN TIMER ENDS */
+  /* REGISTRATION CLOSED UI */
+
   if (timeLeft.expired) {
     return (
       <Box
         textAlign="center"
-        mt={8}
+        mt={4}
         sx={{
-          p: 4,
-          borderRadius: 4,
+          p: { xs: 2.5, md: 3 },
+          borderRadius: 3,
           background: `linear-gradient(135deg, ${theme.palette.primary.main}22, ${theme.palette.secondary.main}22)`,
-          border: `2px solid ${theme.palette.primary.main}`,
+          border: `1px solid ${theme.palette.primary.main}`,
+          maxWidth: 420,
+          mx: "auto",
         }}
       >
         <Typography
-          variant="h4"
           sx={{
             fontWeight: 900,
-            letterSpacing: 2,
+            letterSpacing: 1,
             color: theme.palette.primary.main,
+            fontSize: { xs: "1.2rem", md: "1.6rem" },
           }}
         >
           🚀 REGISTRATION CLOSED
         </Typography>
 
         <Typography
-          mt={2}
+          mt={1}
           sx={{
-            fontSize: "1.4rem",
+            fontSize: { xs: "0.9rem", md: "1rem" },
             fontWeight: 600,
             color: theme.palette.text.secondary,
           }}
@@ -63,64 +70,89 @@ export default function Countdown() {
 
   return (
     <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      gap={2}
-      mt={4}
-      flexWrap="wrap"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 3,
+      }}
     >
-      {units.map((unit, index) => (
-        <Box key={unit} display="flex" alignItems="center">
-          <Box
-            sx={{
-              minWidth: 90,
-              px: 3,
-              py: 2,
-              borderRadius: 3,
-              textAlign: "center",
-              background: theme.palette.background.paper,
-              border: `1px solid ${theme.palette.primary.main}`,
-              boxShadow: `0 0 20px ${theme.palette.primary.main}55`,
-            }}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: "bold",
-                color: theme.palette.primary.main,
-                textShadow: `0 0 10px ${theme.palette.primary.main}`,
-              }}
-            >
-              {timeLeft[unit]}
-            </Typography>
+      {/* LAST DATE */}
 
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                letterSpacing: 1,
-              }}
-            >
-              {unit.toUpperCase()}
-            </Typography>
-          </Box>
-
-          {index !== units.length - 1 && (
-            <Typography
-              variant="h4"
-              sx={{
-                mx: 1,
-                fontWeight: "bold",
-                color: theme.palette.secondary.main,
-                textShadow: `0 0 8px ${theme.palette.secondary.main}`,
-              }}
-            >
-              :
-            </Typography>
-          )}
+      <Typography
+        sx={{
+          mb: 1.5,
+          fontWeight: 600,
+          color: theme.palette.text.secondary,
+          fontSize: { xs: "0.85rem", sm: "0.95rem" },
+        }}
+      >
+        Registration closes on{" "}
+        <Box component="span" sx={{ color: theme.palette.primary.main }}>
+          {formattedDeadline}
         </Box>
-      ))}
+      </Typography>
+
+      {/* COUNTDOWN */}
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: { xs: 0.5, sm: 1 },
+          flexWrap: "wrap",
+        }}
+      >
+        {units.map((unit, index) => (
+          <Box key={unit} display="flex" alignItems="center">
+            <Box
+              sx={{
+                minWidth: { xs: 55, sm: 65 },
+                px: { xs: 1.5, sm: 2 },
+                py: { xs: 1, sm: 1.3 },
+                borderRadius: 2,
+                textAlign: "center",
+                background: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.primary.main}`,
+                boxShadow: `0 0 8px ${theme.palette.primary.main}55`,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  color: theme.palette.primary.main,
+                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                }}
+              >
+                {timeLeft[unit]}
+              </Typography>
+
+              <Typography
+                sx={{
+                  color: theme.palette.text.secondary,
+                  fontSize: { xs: "0.55rem", sm: "0.65rem" },
+                  letterSpacing: 0.5,
+                }}
+              >
+                {unit.toUpperCase()}
+              </Typography>
+            </Box>
+
+            {index !== units.length - 1 && (
+              <Typography
+                sx={{
+                  mx: { xs: 0.3, sm: 0.5 },
+                  fontWeight: "bold",
+                  color: theme.palette.secondary.main,
+                  fontSize: { xs: "1.1rem", sm: "1.3rem" },
+                }}
+              >
+                :
+              </Typography>
+            )}
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }

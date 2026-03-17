@@ -1,66 +1,64 @@
 import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  List,
-  ListItem,
+  Card, CardMedia, CardContent, Typography, Box,
+  Accordion, AccordionSummary, AccordionDetails, Chip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { motion } from "framer-motion";
 import { API } from "../utils/common";
 
-export default function ThemeCard({ theme: themeItem }) {
+export default function ThemeCard({ theme: themeItem, onClick, index = 0 }) {
   const theme = useTheme();
   const location = useLocation();
   const isThemesPage = location.pathname === "/themes";
 
-  const [openDialog, setOpenDialog] = useState(false);
+  const primary = theme.palette.primary.main;
+  const isDark = theme.palette.mode === "dark";
+
+  // Safe parse — works whether stored as newline string or array
+  const problems = Array.isArray(themeItem?.problemStatements)
+    ? themeItem.problemStatements.filter(Boolean)
+    : (themeItem?.problemStatements || "")
+        .split("\n")
+        .map((p) => p.trim())
+        .filter(Boolean);
 
   const handleClick = () => {
-    if (!isThemesPage) {
-      setOpenDialog(true);
-    }
+    if (onClick) onClick(themeItem);
   };
 
-  // convert text → array
-  const problems =
-    themeItem?.problemStatements?.split("\n").filter((p) => p.trim() !== "") ||
-    [];
-
   return (
-    <>
-      <Box
+    <motion.div
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: index * 0.08 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -6 }}
+      style={{ height: "100%" }}
+    >
+      <Card
+        onClick={handleClick}
         sx={{
-          width: 320,
-          height: !isThemesPage ? 330 : 420,
+          width: "100%",
+          borderRadius: "20px",
+          border: `1px solid ${primary}22`,
+          background: theme.palette.background.paper,
+          boxShadow: `0 4px 20px ${primary}12`,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          cursor: "pointer",
+          transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
+          "&:hover": {
+            border: `1px solid ${primary}55`,
+            boxShadow: `0 12px 40px ${primary}28`,
+          },
         }}
       >
-        <Card
-          onClick={handleClick}
-          sx={{
-            height: "100%",
-            borderRadius: "16px",
-            border: `1px solid ${theme.palette.primary.main}`,
-            background: theme.palette.background.paper,
-            boxShadow: `0 0 15px ${theme.palette.primary.main}33`,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            cursor: isThemesPage ? "default" : "pointer",
-          }}
-        >
-          {/* IMAGE */}
-
+        {/* ── IMAGE ── */}
+        <Box sx={{ position: "relative", overflow: "hidden", flexShrink: 0 }}>
           <CardMedia
             component="img"
             image={`${API}${themeItem?.img}`}
@@ -68,29 +66,38 @@ export default function ThemeCard({ theme: themeItem }) {
             sx={{
               height: 180,
               objectFit: "cover",
-              flexShrink: 0,
+              transition: "transform 0.5s ease",
+              "&:hover": { transform: "scale(1.05)" },
             }}
           />
+          {/* gradient overlay */}
+          <Box sx={{
+            position: "absolute", inset: 0,
+            background: `linear-gradient(180deg, transparent 40%, ${isDark ? "rgba(0,0,0,0.7)" : "rgba(0,0,0,0.45)"} 100%)`,
+            pointerEvents: "none",
+          }} />
+        </Box>
 
-          {/* CONTENT */}
-
-          <CardContent
-            sx={{
-              flexGrow: 1,
-              p: 0,
-              display: "flex",
-              flexDirection: "column",
-              overflowY: "auto",
-              scrollbarWidth: "thin",
-            }}
-          >
+        {/* ── CONTENT ── */}
+        <CardContent
+          sx={{
+            flex: 1, p: 0,
+            display: "flex", flexDirection: "column",
+            "&:last-child": { pb: 0 },
+          }}
+          // stop accordion clicks from bubbling to card onClick
+          onClick={(e) => isThemesPage && e.stopPropagation()}
+        >
+          <Box sx={{ px: 2.5, pt: 2, pb: isThemesPage ? 1 : 2 }}>
             <Typography
               variant="h6"
-              fontWeight="bold"
               sx={{
-                color: theme.palette.primary.main,
-                px: 2,
-                pt: 2,
+                fontFamily: "'Syne', sans-serif",
+                fontWeight: 700,
+                fontSize: "1rem",
+                color: primary,
+                mb: 0.8,
+                lineHeight: 1.3,
               }}
             >
               {themeItem?.title}
@@ -100,112 +107,118 @@ export default function ThemeCard({ theme: themeItem }) {
               variant="body2"
               sx={{
                 color: theme.palette.text.secondary,
-                px: 2,
-                mt: 1,
-                mb: 1,
+                fontSize: "0.82rem",
+                lineHeight: 1.6,
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
               }}
             >
-              {themeItem?.desc.substring(0, 100)}...
+              {themeItem?.desc}
             </Typography>
+          </Box>
 
-            {/* SINGLE ACCORDION */}
-
-            {isThemesPage && problems.length > 0 && (
-              <Accordion
-                sx={{
-                  mt: "auto",
-                  width: "100%",
-                  boxShadow: "none",
-                  borderTop: `1px solid ${theme.palette.divider}`,
-                  borderRadius: 0,
-                }}
+          {/* ── PROBLEM STATEMENTS ACCORDION (only on /themes) ── */}
+          {isThemesPage && problems.length > 0 && (
+            <Accordion
+              disableGutters
+              elevation={0}
+              sx={{
+                mt: "auto",
+                background: "transparent",
+                borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                "&:before": { display: "none" },
+                "&.Mui-expanded": { background: `${primary}06` },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon sx={{ fontSize: "1rem", color: primary }} />}
+                sx={{ px: 2.5, py: 0, minHeight: "40px !important",
+                  "& .MuiAccordionSummary-content": { my: "10px !important" } }}
               >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography
-                    variant="subtitle2"
-                    fontWeight="bold"
-                    sx={{ color: theme.palette.primary.main }}
-                  >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <FormatListBulletedIcon sx={{ fontSize: "0.85rem", color: primary }} />
+                  <Typography sx={{
+                    fontFamily: "'Syne', sans-serif",
+                    fontSize: "0.75rem", fontWeight: 700,
+                    color: primary, letterSpacing: "0.04em",
+                  }}>
                     Problem Statements
                   </Typography>
-                </AccordionSummary>
+                  <Chip label={problems.length} size="small" sx={{
+                    height: 16, fontSize: "0.6rem", fontWeight: 700,
+                    background: `${primary}20`, color: primary,
+                    border: `1px solid ${primary}44`, borderRadius: "5px",
+                    "& .MuiChip-label": { px: "5px" },
+                  }} />
+                </Box>
+              </AccordionSummary>
 
-                <AccordionDetails
-                  sx={{
-                    maxHeight: 160,
-                    overflowY: "auto",
-                  }}
-                >
-                  <List dense>
-                    {problems.map((p, i) => (
-                      <ListItem key={i}>
-                        <Typography variant="body2">
-                          {i + 1}. {p}
-                        </Typography>
-                      </ListItem>
-                    ))}
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            )}
-          </CardContent>
-        </Card>
-      </Box>
+              <AccordionDetails sx={{ px: 2, pt: 0, pb: 2 }}>
+                <Box sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  gap: 0.8,
+                }}>
+                  {problems.map((p, i) => (
+                    <Box key={i} sx={{
+                      p: 1.2, borderRadius: "10px",
+                      background: isDark ? `${primary}0c` : `${primary}07`,
+                      border: `1px solid ${primary}1a`,
+                      display: "flex", alignItems: "flex-start", gap: 0.8,
+                      transition: "border 0.2s",
+                      "&:hover": { border: `1px solid ${primary}44` },
+                    }}>
+                      <Typography sx={{
+                        fontSize: "0.6rem", fontWeight: 800,
+                        color: primary, lineHeight: 1,
+                        mt: "2px", flexShrink: 0,
+                        fontFamily: "'Syne', sans-serif",
+                      }}>
+                        {String(i + 1).padStart(2, "0")}
+                      </Typography>
+                      <Typography sx={{
+                        fontSize: "0.72rem",
+                        color: theme.palette.text.secondary,
+                        lineHeight: 1.45,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}>
+                        {p}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          )}
 
-      {/* DIALOG */}
-
-      {!isThemesPage && (
-        <Dialog
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>{themeItem?.title}</DialogTitle>
-
-          <DialogContent dividers>
-            <Box
-              component="img"
-              src={`${API}${themeItem?.img}`}
-              alt={themeItem?.title}
-              sx={{
-                width: "100%",
-                borderRadius: 2,
-                mb: 2,
-              }}
-            />
-
-            <Typography sx={{ mb: 2 }}>{themeItem?.desc}</Typography>
-
-            {problems.length > 0 && (
-              <Accordion
-                defaultExpanded
-                sx={{
-                  boxShadow: "none",
-                  border: `1px solid ${theme.palette.divider}`,
-                  borderRadius: "8px",
-                }}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography fontWeight="bold">Problem Statements</Typography>
-                </AccordionSummary>
-
-                <AccordionDetails>
-                  <List dense>
-                    {problems.map((p, i) => (
-                      <ListItem key={i}>
-                        <Typography variant="body2">
-                          {i + 1}. {p}
-                        </Typography>
-                      </ListItem>
-                    ))}
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
-    </>
+          {/* ── CLICK HINT (not on /themes since accordion is there) ── */}
+          {!isThemesPage && (
+            <Box sx={{
+              px: 2.5, py: 1.5,
+              borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}`,
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <Typography sx={{
+                fontSize: "0.72rem", color: theme.palette.text.disabled,
+                letterSpacing: "0.04em",
+              }}>
+                Click to explore
+              </Typography>
+              <Box sx={{
+                fontSize: "0.65rem", fontWeight: 700,
+                color: primary, letterSpacing: "0.06em",
+              }}>
+                VIEW →
+              </Box>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
