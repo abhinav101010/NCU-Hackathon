@@ -10,234 +10,276 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
+import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../utils/logo.png";
 import { calculateTimeLeft } from "../utils/common";
-import GlassBox from "./GlassBox";
+
+const NAV_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "Sponsors", to: "/sponsors" },
+  { label: "FAQ", to: "/faq" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
+
+const THEME_OPTIONS = [
+  { value: "dark", label: "🌑 Dark Neon" },
+  { value: "light", label: "☀️ Light" },
+  { value: "ocean", label: "🌊 Ocean" },
+  { value: "crimson", label: "🔥 Crimson" },
+  { value: "student", label: "🎓 Student" },
+];
 
 export default function Navbar({ themeName, setThemeName }) {
   const theme = useTheme();
-  const isLight = theme.palette.mode === "light";
+  const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const toggleDrawer = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const isActive = (path) =>
+    path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Sponsors", path: "/sponsors" },
-    { name: "FAQ", path: "/faq" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
-  ];
-
-  const drawer = (
-    <Box
-      sx={{
-        width: 260,
-        p: 3,
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-      }}
-      role="presentation"
-    >
-      {/* Theme Switch */}
-
-      <Box>
-        <Typography
-          variant="caption"
-          sx={{
-            fontWeight: "bold",
-            color: theme.palette.text.secondary,
-            mb: 0.5,
-          }}
-        >
-          Theme
-        </Typography>
-
-        <Select
-          size="small"
-          fullWidth
-          value={themeName}
-          onChange={(e) => setThemeName(e.target.value)}
-          sx={{
-            borderRadius: 2,
-          }}
-        >
-          <MenuItem value="light">Light</MenuItem>
-          <MenuItem value="dark">Dark Neon</MenuItem>
-          <MenuItem value="student">Student</MenuItem>
-          <MenuItem value="liquid">Liquid Glass</MenuItem>
-        </Select>
-      </Box>
-
-      {/* Navigation */}
-
-      <List sx={{ py: 0 }}>
-        {navLinks.map((item) => (
-          <ListItem
-            key={item.name}
-            component={Link}
-            to={item.path}
-            onClick={toggleDrawer}
-            sx={{
-              borderRadius: 2,
-              "&:hover": {
-                background: `${theme.palette.primary.main}15`,
-              },
-            }}
-          >
-            <ListItemText
-              primary={item.name}
-              primaryTypographyProps={{ fontWeight: 500 }}
-            />
-          </ListItem>
-        ))}
-      </List>
-
-      {/* Auth Buttons */}
-
-      <Box sx={{ mt: 1 }}>
-        <Button
-          component={Link}
-          to="/login"
-          variant="outlined"
-          fullWidth
-          sx={{ mb: 1, fontWeight: "bold" }}
-          onClick={toggleDrawer}
-        >
-          Login
-        </Button>
-
-        <Button
-          component={Link}
-          to="/register"
-          variant="contained"
-          fullWidth
-          disabled={calculateTimeLeft().expired}
-          sx={{ fontWeight: "bold" }}
-          onClick={toggleDrawer}
-        >
-          Register
-        </Button>
-      </Box>
-    </Box>
-  );
+  const navBg =
+    theme.palette.mode === "light"
+      ? scrolled
+        ? "rgba(248,250,255,0.92)"
+        : "rgba(248,250,255,0.7)"
+      : scrolled
+      ? `rgba(${theme.palette.background.default.replace("#", "").match(/.{2}/g).map(h => parseInt(h,16)).join(",")},0.95)`
+      : "rgba(0,0,0,0.3)";
 
   return (
     <>
       <AppBar
         position="fixed"
         sx={{
-          background: "rgba(255,255,255,0.05)",
-          backdropFilter: "blur(10px)",
-          borderBottom: "1px solid rgba(255,255,255,0.15)",
+          background: navBg,
+          backdropFilter: "blur(16px)",
+          borderBottom: scrolled
+            ? `1px solid ${theme.palette.primary.main}22`
+            : "1px solid transparent",
+          transition: "all 0.3s ease",
           color: theme.palette.text.primary,
-          // backdropFilter: "blur(10px)",
-          borderBottom: `1px solid ${theme.palette.primary.main}30`,
         }}
       >
-        <Toolbar>
-          {/* Logo */}
+        <Toolbar sx={{ px: { xs: 2, md: 4 }, minHeight: "64px !important" }}>
+          {/* LOGO */}
           <Typography
             component={Link}
             to="/"
-            variant="h6"
             sx={{
-              fontWeight: "bold",
               textDecoration: "none",
-              color: theme.palette.primary.main,
-              letterSpacing: 1,
               display: "flex",
               alignItems: "center",
-              gap: 1,
+              gap: 1.5,
+              mr: 4,
+              flexShrink: 0,
             }}
           >
-            <img src={logo} alt="Innovathon Logo" style={{ height: 40 }} />
-            INNOVATHON
+            <img src={logo} alt="Innovathon" style={{ height: 38 }} />
+            <Box>
+              <Typography
+                sx={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontWeight: 800,
+                  fontSize: "1.1rem",
+                  lineHeight: 1,
+                  color: theme.palette.primary.main,
+                  letterSpacing: "0.06em",
+                }}
+              >
+                INNOVATHON
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "0.6rem",
+                  color: theme.palette.text.secondary,
+                  letterSpacing: "0.12em",
+                  lineHeight: 1,
+                  mt: 0.2,
+                }}
+              >
+                2026
+              </Typography>
+            </Box>
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* Desktop Menu */}
-          <Box
+          {/* DESKTOP NAV */}
+          {!isMobile && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mr: 2 }}>
+              {NAV_LINKS.map((link) => (
+                <Button
+                  key={link.to}
+                  component={Link}
+                  to={link.to}
+                  size="small"
+                  sx={{
+                    color: isActive(link.to)
+                      ? theme.palette.primary.main
+                      : theme.palette.text.secondary,
+                    fontWeight: isActive(link.to) ? 700 : 500,
+                    fontSize: "0.82rem",
+                    px: 1.2,
+                    py: 0.6,
+                    borderRadius: "8px",
+                    position: "relative",
+                    "&:hover": {
+                      color: theme.palette.primary.main,
+                      background: `${theme.palette.primary.main}12`,
+                    },
+                    ...(isActive(link.to) && {
+                      background: `${theme.palette.primary.main}14`,
+                    }),
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+            </Box>
+          )}
+
+          {/* THEME SWITCHER */}
+          <Select
+            size="small"
+            value={themeName}
+            onChange={(e) => setThemeName(e.target.value)}
             sx={{
-              display: { xs: "none", md: "flex" },
-              alignItems: "center",
+              mr: 1.5,
+              fontSize: "0.78rem",
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: `${theme.palette.primary.main}33`,
+                borderRadius: "10px",
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: `${theme.palette.primary.main}88`,
+              },
+              "& .MuiSelect-icon": { color: theme.palette.primary.main },
+              minWidth: 120,
             }}
           >
-            <Select
-              size="small"
-              value={themeName}
-              onChange={(e) => setThemeName(e.target.value)}
-              sx={{
-                mr: 3,
-                color: theme.palette.text.primary,
-                border: `1px solid ${theme.palette.primary.main}40`,
-                ".MuiOutlinedInput-notchedOutline": { border: "none" },
-              }}
-            >
-              <MenuItem value="light">Light</MenuItem>
-              <MenuItem value="dark">Dark Neon</MenuItem>
-              <MenuItem value="liquid">Ocean</MenuItem>
-              <MenuItem value="student">Student</MenuItem>
-            </Select>
-
-            {navLinks.map((link) => (
-              <Button
-                key={link.name}
-                component={Link}
-                to={link.path}
-                color="inherit"
-              >
-                {link.name}
-              </Button>
+            {THEME_OPTIONS.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: "0.82rem" }}>
+                {opt.label}
+              </MenuItem>
             ))}
+          </Select>
 
+          {/* CTA BUTTONS */}
+          {!isMobile && (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                component={Link}
+                to="/login"
+                variant="outlined"
+                size="small"
+                color="primary"
+                sx={{ borderRadius: "10px", px: 2, fontSize: "0.8rem" }}
+              >
+                Login
+              </Button>
+              <Button
+                component={Link}
+                to="/register"
+                variant="contained"
+                size="small"
+                color="secondary"
+                disabled={calculateTimeLeft().expired}
+                sx={{ borderRadius: "10px", px: 2, fontSize: "0.8rem" }}
+              >
+                Register
+              </Button>
+            </Box>
+          )}
+
+          {/* MOBILE MENU */}
+          {isMobile && (
+            <IconButton onClick={() => setDrawerOpen(true)} sx={{ color: theme.palette.primary.main }}>
+              <MenuIcon />
+            </IconButton>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      {/* MOBILE DRAWER */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{
+          sx: {
+            width: 260,
+            background: theme.palette.background.default,
+            borderLeft: `1px solid ${theme.palette.primary.main}22`,
+            pt: 1,
+          },
+        }}
+      >
+        <Box sx={{ display: "flex", justifyContent: "flex-end", px: 2, pb: 1 }}>
+          <IconButton onClick={() => setDrawerOpen(false)} sx={{ color: theme.palette.text.secondary }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <List>
+          {NAV_LINKS.map((link) => (
+            <ListItem key={link.to} disablePadding>
+              <ListItemButton
+                component={Link}
+                to={link.to}
+                onClick={() => setDrawerOpen(false)}
+                sx={{
+                  px: 3,
+                  color: isActive(link.to) ? theme.palette.primary.main : theme.palette.text.primary,
+                  fontWeight: isActive(link.to) ? 700 : 400,
+                }}
+              >
+                <ListItemText primary={link.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+          <ListItem sx={{ px: 3, pt: 2, gap: 1 }}>
             <Button
               component={Link}
               to="/login"
               variant="outlined"
-              color="secondary"
-              sx={{ ml: 2, fontWeight: "bold" }}
+              fullWidth
+              size="small"
+              onClick={() => setDrawerOpen(false)}
             >
               Login
             </Button>
-
             <Button
               component={Link}
               to="/register"
               variant="contained"
               color="secondary"
+              fullWidth
+              size="small"
               disabled={calculateTimeLeft().expired}
-              sx={{ ml: 2, fontWeight: "bold" }}
+              onClick={() => setDrawerOpen(false)}
             >
               Register
             </Button>
-          </Box>
-
-          {/* Mobile Hamburger */}
-          <IconButton
-            sx={{ display: { xs: "flex", md: "none" } }}
-            color="inherit"
-            onClick={toggleDrawer}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
-      {/* Mobile Drawer */}
-      <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
-        {drawer}
+          </ListItem>
+        </List>
       </Drawer>
     </>
   );
