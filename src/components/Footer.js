@@ -26,10 +26,10 @@ const MORE_LINKS = [
 ];
 
 const SOCIALS = [
-  { icon: <GitHubIcon fontSize="small" />,    href: "#", label: "GitHub"    },
-  { icon: <LinkedInIcon fontSize="small" />,  href: "#", label: "LinkedIn"  },
+  // { icon: <GitHubIcon fontSize="small" />,    href: "#", label: "GitHub"    },
+  // { icon: <LinkedInIcon fontSize="small" />,  href: "#", label: "LinkedIn"  },
   { icon: <InstagramIcon fontSize="small" />, href: "#", label: "Instagram" },
-  { icon: <EmailIcon fontSize="small" />,     href: "mailto:cloudiotclub@ncuindia.edu", label: "Email" },
+  // { icon: <EmailIcon fontSize="small" />,     href: "mailto:cloudiotclub@ncuindia.edu", label: "Email" },
 ];
 
 export default function Footer() {

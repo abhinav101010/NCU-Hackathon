@@ -1,7 +1,7 @@
 import { ThemeProvider, CssBaseline, Box } from "@mui/material";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { darkNeon, lightTheme, oceanTheme, crimsonTheme, studentTheme } from "./theme";
+import { darkNeon, lightTheme, oceanTheme, crimsonTheme, studentTheme, windTheme } from "./theme";
 
 import ScrollToTop from "./utils/ScrollToTop";
 import Navbar from "./components/Navbar";
@@ -31,6 +31,7 @@ const THEMES = {
   ocean: oceanTheme,
   crimson: crimsonTheme,
   student: studentTheme,
+  wind: windTheme,
 };
 
 function App() {
@@ -40,7 +41,7 @@ function App() {
   const teamToken = localStorage.getItem("teamToken");
 
   const [themeName, setThemeName] = useState(
-    localStorage.getItem("theme") || "dark"
+    localStorage.getItem("theme") || "ocean"
   );
 
   const currentTheme = THEMES[themeName] || THEMES.dark;
@@ -53,7 +54,7 @@ function App() {
     if (teamToken && location.pathname === "/login") {
       window.location.href = "/dashboard";
     }
-  }, [location.pathname]);
+  }, [location.pathname, teamToken]);
 
   return (
     <ThemeProvider theme={currentTheme}>
