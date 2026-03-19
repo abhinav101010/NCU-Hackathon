@@ -10,10 +10,10 @@ import CodeIcon from "@mui/icons-material/Code";
 import HandshakeIcon from "@mui/icons-material/Handshake";
 
 const STATS = [
-  { icon: <TimerIcon />,        value: "56",     label: "Hours",        suffix: "hr" },
-  { icon: <EmojiEventsIcon />,  value: "₹50k+",  label: "Prize Pool",   suffix: ""   },
-  { icon: <GroupsIcon />,       value: "500+",   label: "Participants", suffix: ""   },
-  { icon: <LocationOnIcon />,   value: "NCU",    label: "Gurugram",     suffix: ""   },
+  { icon: <TimerIcon />,       value: "56",    label: "Hours"        },
+  { icon: <EmojiEventsIcon />, value: "₹50k+", label: "Prize Pool"   },
+  { icon: <GroupsIcon />,      value: "500+",  label: "Participants" },
+  { icon: <LocationOnIcon />,  value: "NCU",   label: "Gurugram"     },
 ];
 
 const PILLARS = [
@@ -40,10 +40,10 @@ const PILLARS = [
 ];
 
 export default function AboutPage() {
-  const theme = useTheme();
-  const primary = theme.palette.primary.main;
+  const theme     = useTheme();
+  const primary   = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
-  const isDark = theme.palette.mode === "dark";
+  const isDark    = theme.palette.mode === "dark";
 
   return (
     <Container maxWidth="md" sx={{ mt: 10, mb: 12 }}>
@@ -56,15 +56,12 @@ export default function AboutPage() {
             sx={{
               mb: 3, px: 1,
               fontSize: "0.78rem", fontWeight: 600,
-              background: `${primary}18`,
-              color: primary,
-              border: `1px solid ${primary}44`,
-              borderRadius: "999px",
+              background: `${primary}18`, color: primary,
+              border: `1px solid ${primary}44`, borderRadius: "999px",
             }}
           />
           <Typography variant="h2" sx={{
-            fontFamily: "'Syne', sans-serif",
-            fontWeight: 800, mb: 2,
+            fontFamily: "'Syne', sans-serif", fontWeight: 800, mb: 2,
             fontSize: { xs: "2.2rem", md: "3rem" },
             background: `linear-gradient(135deg, ${primary}, ${secondary})`,
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
@@ -73,8 +70,7 @@ export default function AboutPage() {
           </Typography>
           <Typography sx={{
             color: theme.palette.text.secondary,
-            maxWidth: 600, mx: "auto",
-            lineHeight: 1.8, fontSize: "1rem",
+            maxWidth: 600, mx: "auto", lineHeight: 1.8, fontSize: "1rem",
           }}>
             INNOVATHON is NCU's flagship 56-hour innovation challenge where
             developers, designers, and problem-solvers converge to build
@@ -83,56 +79,54 @@ export default function AboutPage() {
         </Box>
       </motion.div>
 
-      {/* ── STATS ROW ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
+      {/* ── STATS — centered ── */}
+      <Grid
+        container
+        spacing={3}
+        justifyContent="center"
+        sx={{ mb: 10 }}
       >
-        <Grid container spacing={2} sx={{ mb: 10 }}>
-          {STATS.map((s, i) => (
-            <Grid item xs={6} sm={3} key={i}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                viewport={{ once: true }}
-              >
-                <Box sx={{
-                  p: 2.5, borderRadius: "16px", textAlign: "center",
-                  background: `${primary}0a`,
-                  border: `1px solid ${primary}22`,
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    background: `${primary}14`,
-                    border: `1px solid ${primary}44`,
-                    transform: "translateY(-4px)",
-                    boxShadow: `0 8px 24px ${primary}18`,
-                  },
-                }}>
-                  <Box sx={{ color: primary, mb: 1, display: "flex", justifyContent: "center" }}>
-                    {s.icon}
-                  </Box>
-                  <Typography sx={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontWeight: 800, fontSize: "1.5rem",
-                    color: primary, lineHeight: 1,
-                  }}>
-                    {s.value}
-                  </Typography>
-                  <Typography sx={{
-                    fontSize: "0.72rem", color: theme.palette.text.secondary,
-                    letterSpacing: "0.08em", mt: 0.5,
-                  }}>
-                    {s.label.toUpperCase()}
-                  </Typography>
+        {STATS.map((s, i) => (
+          <Grid item xs={6} sm={3} key={s.label}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              viewport={{ once: true }}
+            >
+              <Box sx={{
+                p: 2.5, borderRadius: "16px", textAlign: "center",
+                background: `${primary}0a`,
+                border: `1px solid ${primary}22`,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  background: `${primary}14`,
+                  border: `1px solid ${primary}44`,
+                  transform: "translateY(-4px)",
+                  boxShadow: `0 8px 24px ${primary}18`,
+                },
+              }}>
+                <Box sx={{ color: primary, mb: 1, display: "flex", justifyContent: "center" }}>
+                  {s.icon}
                 </Box>
-              </motion.div>
-            </Grid>
-          ))}
-        </Grid>
-      </motion.div>
+                <Typography sx={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontWeight: 800, fontSize: "1.6rem",
+                  color: primary, lineHeight: 1,
+                }}>
+                  {s.value}
+                </Typography>
+                <Typography sx={{
+                  fontSize: "0.72rem", color: theme.palette.text.secondary,
+                  letterSpacing: "0.08em", mt: 0.5, fontWeight: 600,
+                }}>
+                  {s.label.toUpperCase()}
+                </Typography>
+              </Box>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
 
       {/* ── PILLARS ── */}
       <Box sx={{ mb: 6 }}>
@@ -147,7 +141,7 @@ export default function AboutPage() {
 
         <Grid container spacing={2.5} justifyContent="center">
           {PILLARS.map((p, i) => (
-            <Grid item xs={12} sm={6} key={i}>
+            <Grid item xs={12} sm={6} key={p.title}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -161,6 +155,7 @@ export default function AboutPage() {
                   display: "flex", flexDirection: "column",
                   alignItems: "center", gap: 1.5,
                   transition: "all 0.3s ease",
+                  height: "100%",
                   "&:hover": {
                     border: `1px solid ${primary}44`,
                     boxShadow: `0 8px 28px ${primary}14`,
@@ -168,8 +163,7 @@ export default function AboutPage() {
                   },
                 }}>
                   <Box sx={{
-                    width: 52, height: 52,
-                    borderRadius: "16px",
+                    width: 52, height: 52, borderRadius: "16px",
                     background: `linear-gradient(135deg, ${primary}22, ${secondary}18)`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     color: primary,
@@ -183,8 +177,7 @@ export default function AboutPage() {
                     {p.title}
                   </Typography>
                   <Typography sx={{
-                    fontSize: "0.85rem",
-                    color: theme.palette.text.secondary,
+                    fontSize: "0.85rem", color: theme.palette.text.secondary,
                     lineHeight: 1.65, textAlign: "center",
                   }}>
                     {p.desc}
