@@ -47,12 +47,13 @@ const NAV_LINKS = [
 ];
 
 const THEME_OPTIONS = [
-  { value: "dark",    label: "🌑 Dark Neon" },
   { value: "light",   label: "☀️ Light"     },
+  { value: "dark",    label: "🌑 Dark Neon" },
   { value: "ocean",   label: "🌊 Ocean"     },
-  { value: "crimson", label: "🔥 Crimson"   },
-  { value: "student", label: "🎓 Student"   },
   { value: "wind", label: "💨 Windy" },
+  { value: "crimson", label: "🔥 Crimson"   },
+  { value: "bloodmoon", label: "🩸 Bloodmoon" },
+  { value: "student", label: "🎓 Student"   },
 ];
 
 export default function Navbar({ themeName, setThemeName }) {
