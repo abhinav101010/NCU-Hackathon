@@ -554,3 +554,29 @@ export const studentTheme = createTheme({
     background: { default: "#0f0f1a", paper: "rgba(124,77,255,0.06)" },
   }),
 });
+
+export const windTheme = createTheme({
+  name: "wind",
+  palette: {
+    mode: "dark",
+    primary:   { main: "#1c6bba", dark: "#1450a0", contrastText: "#fff" },
+    secondary: { main: "#c8d6e8", dark: "#a0b4cc", contrastText: "#000" },
+    background: {
+      default: "#060911",
+      paper:   "rgba(28,107,186,0.06)",
+    },
+    text: {
+      primary:   "#e8edf5",
+      secondary: "#7a95b8",
+    },
+    divider: "rgba(28,107,186,0.15)",
+  },
+  typography: baseTypography,      // reuse your existing baseTypography
+  shape: { borderRadius: 12 },
+  components: makeComponents({     // reuse your existing makeComponents
+    primary:    { main: "#1c6bba", dark: "#1450a0", contrastText: "#fff" },
+    secondary:  { main: "#c8d6e8", dark: "#a0b4cc" },
+    background: { default: "#060911", paper: "rgba(28,107,186,0.06)" },
+  }),
+});
+ 
