@@ -1,7 +1,7 @@
 import { ThemeProvider, CssBaseline, Box } from "@mui/material";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { darkNeon, lightTheme, oceanTheme, crimsonTheme, studentTheme, windTheme } from "./theme";
+import { darkNeon, lightTheme, oceanTheme, crimsonTheme, studentTheme, windTheme, bloodmoonTheme } from "./theme";
 
 import ScrollToTop from "./utils/ScrollToTop";
 import Navbar from "./components/Navbar";
@@ -32,6 +32,7 @@ const THEMES = {
   crimson: crimsonTheme,
   student: studentTheme,
   wind: windTheme,
+  bloodmoon: bloodmoonTheme,
 };
 
 function App() {
