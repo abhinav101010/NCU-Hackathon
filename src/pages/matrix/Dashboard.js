@@ -1,8 +1,21 @@
 import { useEffect, useState } from "react";
 import {
-  Container, TextField, Typography, Button, Grid, Box,
-  FormControl, InputLabel, Select, MenuItem, CircularProgress,
-  Accordion, AccordionSummary, AccordionDetails, Chip, Avatar,
+  Container,
+  TextField,
+  Typography,
+  Button,
+  Grid,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Chip,
+  Avatar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -31,12 +44,28 @@ export default function Dashboard() {
 
   const primary = theme.palette.primary.main;
 
-  useEffect(() => { loadTeam(); loadThemes(); }, []);
+  useEffect(() => {
+    loadTeam();
+    loadThemes();
+  }, []);
 
   const loadTeam = async () => {
-    const res = await fetch(`${API}/api/registrations/me`, { headers: { Authorization: token } });
-    const data = await res.json();
-    setTeam(data);
+    try {
+      const res = await fetch(`${API}/api/registrations/me`, {
+        headers: { Authorization: token },
+      });
+      if (!res.ok) {
+        // Token invalid or expired — kick back to login
+        localStorage.removeItem("teamToken");
+        navigate("/login");
+        return;
+      }
+      const data = await res.json();
+      setTeam(data);
+    } catch {
+      localStorage.removeItem("teamToken");
+      navigate("/login");
+    }
   };
 
   const loadThemes = async () => {
@@ -52,16 +81,33 @@ export default function Dashboard() {
     setExpanded(isExpanded ? panel : false);
 
   const handleUpdate = async () => {
-    if (newPassword && newPassword !== confirmPassword) { alert("Passwords do not match"); return; }
-    if (!team.member1Email || !team.member2Email) { alert("Member emails are required"); return; }
+    if (newPassword && newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    if (!team.member1Email || !team.member2Email) {
+      alert("Member emails are required");
+      return;
+    }
 
     const payload = {
-      teamName: team.teamName, teamLead: team.teamLead, phone: team.phone,
-      university: team.university, yearCourse: team.yearCourse,
-      member1: team.member1, member1Email: team.member1Email, member1Phone: team.member1Phone,
-      member2: team.member2, member2Email: team.member2Email, member2Phone: team.member2Phone,
-      teamLeadTshirt: team.teamLeadTshirt, member1Tshirt: team.member1Tshirt, member2Tshirt: team.member2Tshirt,
-      selectedTheme: team.selectedTheme, ideaDescription: team.ideaDescription, email: team.email,
+      teamName: team.teamName,
+      teamLead: team.teamLead,
+      phone: team.phone,
+      university: team.university,
+      yearCourse: team.yearCourse,
+      member1: team.member1,
+      member1Email: team.member1Email,
+      member1Phone: team.member1Phone,
+      member2: team.member2,
+      member2Email: team.member2Email,
+      member2Phone: team.member2Phone,
+      teamLeadTshirt: team.teamLeadTshirt,
+      member1Tshirt: team.member1Tshirt,
+      member2Tshirt: team.member2Tshirt,
+      selectedTheme: team.selectedTheme,
+      ideaDescription: team.ideaDescription,
+      email: team.email,
     };
     if (newPassword) payload.password = newPassword;
 
@@ -77,7 +123,10 @@ export default function Dashboard() {
     setConfirmPassword("");
   };
 
-  const handleLogout = () => { localStorage.removeItem("teamToken"); navigate("/login"); };
+  const handleLogout = () => {
+    localStorage.removeItem("teamToken");
+    navigate("/login");
+  };
 
   const fieldProps = (disabled) => ({
     disabled,
@@ -134,7 +183,9 @@ export default function Dashboard() {
             <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.1 }}>
               {team.teamName}
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}
+            >
               <Chip
                 label={team.teamId}
                 size="small"
@@ -170,19 +221,40 @@ export default function Dashboard() {
       {/* ── ACCORDIONS ── */}
       {[
         {
-          id: "login", label: "Login Credentials",
+          id: "login",
+          label: "Login Credentials",
           content: (
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField fullWidth label="Login Username" value={team.email || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange("email", e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="Login Username"
+                  value={team.email || ""}
+                  {...fieldProps(!editing)}
+                  onChange={(e) => handleFieldChange("email", e.target.value)}
+                />
               </Grid>
               {editing && (
                 <>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth label="New Password" type="password" value={newPassword} {...fieldProps(false)} onChange={(e) => setNewPassword(e.target.value)} />
+                    <TextField
+                      fullWidth
+                      label="New Password"
+                      type="password"
+                      value={newPassword}
+                      {...fieldProps(false)}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} {...fieldProps(false)} onChange={(e) => setConfirmPassword(e.target.value)} />
+                    <TextField
+                      fullWidth
+                      label="Confirm Password"
+                      type="password"
+                      value={confirmPassword}
+                      {...fieldProps(false)}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                   </Grid>
                 </>
               )}
@@ -190,26 +262,66 @@ export default function Dashboard() {
           ),
         },
         {
-          id: "team", label: "Team Info",
+          id: "team",
+          label: "Team Info",
           content: (
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField fullWidth label="Team Name" value={team.teamName || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange("teamName", e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="Team Name"
+                  value={team.teamName || ""}
+                  {...fieldProps(!editing)}
+                  onChange={(e) =>
+                    handleFieldChange("teamName", e.target.value)
+                  }
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField fullWidth label="Team Lead" value={team.teamLead || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange("teamLead", e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="Team Lead"
+                  value={team.teamLead || ""}
+                  {...fieldProps(!editing)}
+                  onChange={(e) =>
+                    handleFieldChange("teamLead", e.target.value)
+                  }
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField fullWidth label="Team Lead Email" value={team.teamLeadEmail || ""} disabled size="small" />
+                <TextField
+                  fullWidth
+                  label="Team Lead Email"
+                  value={team.teamLeadEmail || ""}
+                  disabled
+                  size="small"
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField fullWidth label="Phone" value={team.phone || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange("phone", e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="Phone"
+                  value={team.phone || ""}
+                  {...fieldProps(!editing)}
+                  onChange={(e) => handleFieldChange("phone", e.target.value)}
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth size="small" disabled={!editing}>
                   <InputLabel>Team Lead T-Shirt</InputLabel>
-                  <Select value={team.teamLeadTshirt || ""} label="Team Lead T-Shirt" onChange={(e) => handleFieldChange("teamLeadTshirt", e.target.value)} sx={{ borderRadius: "10px" }}>
-                    {TSHIRT_SIZES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+                  <Select
+                    value={team.teamLeadTshirt || ""}
+                    label="Team Lead T-Shirt"
+                    onChange={(e) =>
+                      handleFieldChange("teamLeadTshirt", e.target.value)
+                    }
+                    sx={{ borderRadius: "10px" }}
+                  >
+                    {TSHIRT_SIZES.map((s) => (
+                      <MenuItem key={s} value={s}>
+                        {s}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
@@ -217,42 +329,103 @@ export default function Dashboard() {
           ),
         },
         {
-          id: "university", label: "University Info",
+          id: "university",
+          label: "University Info",
           content: (
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField fullWidth label="University" value={team.university || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange("university", e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="University"
+                  value={team.university || ""}
+                  {...fieldProps(!editing)}
+                  onChange={(e) =>
+                    handleFieldChange("university", e.target.value)
+                  }
+                />
               </Grid>
               <Grid item xs={12}>
-                <TextField fullWidth label="Year & Course" value={team.yearCourse || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange("yearCourse", e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="Year & Course"
+                  value={team.yearCourse || ""}
+                  {...fieldProps(!editing)}
+                  onChange={(e) =>
+                    handleFieldChange("yearCourse", e.target.value)
+                  }
+                />
               </Grid>
             </Grid>
           ),
         },
         {
-          id: "members", label: "Team Members & T-Shirt Sizes",
+          id: "members",
+          label: "Team Members & T-Shirt Sizes",
           content: (
             <Grid container spacing={2}>
               {[1, 2].map((m) => (
                 <Grid item xs={12} key={m}>
-                  <Typography variant="body2" fontWeight={600} color="primary" sx={{ mb: 1.5 }}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    color="primary"
+                    sx={{ mb: 1.5 }}
+                  >
                     Member {m}
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label={`Member ${m} Name`} value={team[`member${m}`] || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange(`member${m}`, e.target.value)} />
+                      <TextField
+                        fullWidth
+                        label={`Member ${m} Name`}
+                        value={team[`member${m}`] || ""}
+                        {...fieldProps(!editing)}
+                        onChange={(e) =>
+                          handleFieldChange(`member${m}`, e.target.value)
+                        }
+                      />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label={`Member ${m} Email`} value={team[`member${m}Email`] || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange(`member${m}Email`, e.target.value)} />
+                      <TextField
+                        fullWidth
+                        label={`Member ${m} Email`}
+                        value={team[`member${m}Email`] || ""}
+                        {...fieldProps(!editing)}
+                        onChange={(e) =>
+                          handleFieldChange(`member${m}Email`, e.target.value)
+                        }
+                      />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label={`Member ${m} Phone`} value={team[`member${m}Phone`] || ""} {...fieldProps(!editing)} onChange={(e) => handleFieldChange(`member${m}Phone`, e.target.value)} />
+                      <TextField
+                        fullWidth
+                        label={`Member ${m} Phone`}
+                        value={team[`member${m}Phone`] || ""}
+                        {...fieldProps(!editing)}
+                        onChange={(e) =>
+                          handleFieldChange(`member${m}Phone`, e.target.value)
+                        }
+                      />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <FormControl fullWidth size="small" disabled={!editing}>
                         <InputLabel>T-Shirt Size</InputLabel>
-                        <Select value={team[`member${m}Tshirt`] || ""} label="T-Shirt Size" onChange={(e) => handleFieldChange(`member${m}Tshirt`, e.target.value)} sx={{ borderRadius: "10px" }}>
-                          {TSHIRT_SIZES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+                        <Select
+                          value={team[`member${m}Tshirt`] || ""}
+                          label="T-Shirt Size"
+                          onChange={(e) =>
+                            handleFieldChange(
+                              `member${m}Tshirt`,
+                              e.target.value,
+                            )
+                          }
+                          sx={{ borderRadius: "10px" }}
+                        >
+                          {TSHIRT_SIZES.map((s) => (
+                            <MenuItem key={s} value={s}>
+                              {s}
+                            </MenuItem>
+                          ))}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -263,33 +436,57 @@ export default function Dashboard() {
           ),
         },
         {
-          id: "idea", label: "Hackathon Idea",
+          id: "idea",
+          label: "Hackathon Idea",
           content: (
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <FormControl fullWidth size="small" disabled>
                   <InputLabel>Selected Theme</InputLabel>
-                  <Select value={team.selectedTheme || ""} label="Selected Theme" sx={{ borderRadius: "10px" }}>
-                    {themes.map((t) => <MenuItem key={t._id} value={t.title}>{t.title}</MenuItem>)}
+                  <Select
+                    value={team.selectedTheme || ""}
+                    label="Selected Theme"
+                    sx={{ borderRadius: "10px" }}
+                  >
+                    {themes.map((t) => (
+                      <MenuItem key={t._id} value={t.title}>
+                        {t.title}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  fullWidth multiline minRows={8} maxRows={20}
+                  fullWidth
+                  multiline
+                  minRows={8}
+                  maxRows={20}
                   label="Project Idea Description"
                   value={team.ideaDescription || ""}
                   {...fieldProps(!editing)}
-                  onChange={(e) => handleFieldChange("ideaDescription", e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange("ideaDescription", e.target.value)
+                  }
                 />
               </Grid>
             </Grid>
           ),
         },
       ].map(({ id, label, content }) => (
-        <Accordion key={id} expanded={expanded === id} onChange={handleAccordion(id)} sx={{ mb: 1.5 }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: primary }} />}>
-            <Typography fontWeight={700} sx={{ color: expanded === id ? primary : "inherit" }}>
+        <Accordion
+          key={id}
+          expanded={expanded === id}
+          onChange={handleAccordion(id)}
+          sx={{ mb: 1.5 }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: primary }} />}
+          >
+            <Typography
+              fontWeight={700}
+              sx={{ color: expanded === id ? primary : "inherit" }}
+            >
               {label}
             </Typography>
           </AccordionSummary>
@@ -322,7 +519,10 @@ export default function Dashboard() {
             </Button>
             <Button
               variant="outlined"
-              onClick={() => { setEditing(false); loadTeam(); }}
+              onClick={() => {
+                setEditing(false);
+                loadTeam();
+              }}
               sx={{ borderRadius: "12px" }}
             >
               Cancel
@@ -345,7 +545,8 @@ export default function Dashboard() {
             display: "inline-block",
           }}
         >
-          Editing period has expired. You can only edit details within 2 days after registration closes.
+          Editing period has expired. You can only edit details within 2 days
+          after registration closes.
         </Typography>
       )}
     </Container>
