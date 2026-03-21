@@ -18,6 +18,8 @@ import Countdown from "./Countdown";
 import { useNavigate } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import paymentQRNCU from "../utils/800.png";
+import paymentQR from "../utils/950.png";
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -33,6 +35,25 @@ const SLIDE = {
   enter: (dir) => ({ x: dir > 0 ? 80 : -80, opacity: 0 }),
   center: { x: 0, opacity: 1 },
   exit: (dir) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
+};
+
+const isNCU = (university) => {
+  const u = university
+    .trim()
+    .toLowerCase()
+    .replace(/[.\-_]/g, " ")
+    .replace(/\s+/g, " ");
+  return (
+    u === "ncu" ||
+    u === "the northcap university" ||
+    u === "northcap university" ||
+    u === "the north cap university" ||
+    u === "north cap university" ||
+    u === "the ncu" ||
+    u === "ncu gurugram" ||
+    u === "northcap university gurugram" ||
+    u === "the northcap university gurugram"
+  );
 };
 
 const GAP = 1.8; // uniform vertical gap between every field row
@@ -184,50 +205,50 @@ export default function RegistrationForm() {
   const [registeredTeamId, setRegisteredTeamId] = useState("");
   const navigate = useNavigate();
 
-  // const [formData, setFormData] = useState({
-  //   teamName: "demo",
-  //   teamLead: "demo",
-  //   teamLeadEmail: "abhinav101010yadav@gmail.com",
-  //   teamLeadTshirt: "M",
-  //   phone: "9876543211",
-  //   university: "demo ",
-  //   yearCourse: "demo",
-  //   member1: "demo",
-  //   member1Email: "demo@gmail.com",
-  //   member1Phone: "9876543211",
-  //   member1Tshirt: "M",
-  //   member2: "demoo",
-  //   member2Email: "demoo@gmail.com",
-  //   member2Phone: "9876543211",
-  //   member2Tshirt: "M",
-  //   email: "dmeoo@gmail.com",
-  //   password: "abc123",
-  //   selectedTheme: "",
-  //   ideaDescription: "dd",
-  // });
-  
   const [formData, setFormData] = useState({
-    teamName: "",
-    teamLead: "",
-    teamLeadEmail: "",
-    teamLeadTshirt: "",
-    phone: "",
-    university: "",
-    yearCourse: "",
-    member1: "",
-    member1Email: "",
-    member1Phone: "",
-    member1Tshirt: "",
-    member2: "",
-    member2Email: "",
-    member2Phone: "",
-    member2Tshirt: "",
-    email: "",
-    password: "",
+    teamName: "demo",
+    teamLead: "demo",
+    teamLeadEmail: "abhinav101010yadav@gmail.com",
+    teamLeadTshirt: "M",
+    phone: "9876543211",
+    university: "demo ",
+    yearCourse: "demo",
+    member1: "demo",
+    member1Email: "demo@gmail.com",
+    member1Phone: "9876543211",
+    member1Tshirt: "M",
+    member2: "demoo",
+    member2Email: "demoo@gmail.com",
+    member2Phone: "9876543211",
+    member2Tshirt: "M",
+    email: "dmeoo@gmail.com",
+    password: "abc123",
     selectedTheme: "",
-    ideaDescription: "",
+    ideaDescription: "dd",
   });
-  
+
+  // const [formData, setFormData] = useState({
+  //   teamName: "",
+  //   teamLead: "",
+  //   teamLeadEmail: "",
+  //   teamLeadTshirt: "",
+  //   phone: "",
+  //   university: "",
+  //   yearCourse: "",
+  //   member1: "",
+  //   member1Email: "",
+  //   member1Phone: "",
+  //   member1Tshirt: "",
+  //   member2: "",
+  //   member2Email: "",
+  //   member2Phone: "",
+  //   member2Tshirt: "",
+  //   email: "",
+  //   password: "",
+  //   selectedTheme: "",
+  //   ideaDescription: "",
+  // });
+
   useEffect(() => {
     fetch(`${API}/api/themes`)
       .then((r) => r.json())
@@ -265,7 +286,7 @@ export default function RegistrationForm() {
     if (!validatePhone(formData.phone)) e.phone = "Enter valid 10 digit phone";
     if (!formData.teamLeadTshirt) e.teamLeadTshirt = "Select a size";
     if (!formData.university) e.university = "University required";
-    if (formData.university.length < 3)
+    if (formData.university.length <= 3)
       e.university = "University full name required";
     if (!formData.yearCourse) e.yearCourse = "Year/Course required";
     setErrors(e);
@@ -956,7 +977,7 @@ export default function RegistrationForm() {
                         {
                           label: "Registration Fee",
                           sub: "Per team",
-                          amount: "₹300",
+                          amount: isNCU(formData.university) ? "₹300" : "₹450",
                         },
                         {
                           label: "T-Shirts",
@@ -1030,7 +1051,7 @@ export default function RegistrationForm() {
                             color: primary,
                           }}
                         >
-                          ₹800
+                          {isNCU(formData.university) ? "₹800" : "₹950"}
                         </Typography>
                       </Box>
                     </Box>
@@ -1054,7 +1075,7 @@ export default function RegistrationForm() {
                           width: 110,
                           height: 110,
                           flexShrink: 0,
-                          borderRadius: "14px",
+                          // borderRadius: "14px",
                           overflow: "hidden",
                           border: `2px solid ${primary}44`,
                           background: "#fff",
@@ -1063,7 +1084,11 @@ export default function RegistrationForm() {
                       >
                         <Box
                           component="img"
-                          src="/payment-qr.png"
+                          src={
+                            isNCU(formData.university)
+                              ? paymentQRNCU
+                              : paymentQR
+                          }
                           sx={{
                             width: "100%",
                             height: "100%",
@@ -1080,6 +1105,33 @@ export default function RegistrationForm() {
                           gap: 1.5,
                         }}
                       >
+                        {/* fee note */}
+                        <Box
+                          sx={{
+                            px: 1.5,
+                            py: 0.8,
+                            borderRadius: "10px",
+                            background: isNCU(formData.university)
+                              ? `${primary}14`
+                              : `${secondary}14`,
+                            border: `1px solid ${isNCU(formData.university) ? primary : secondary}33`,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: "0.72rem",
+                              fontWeight: 700,
+                              color: isNCU(formData.university)
+                                ? primary
+                                : secondary,
+                            }}
+                          >
+                            {isNCU(formData.university)
+                              ? "₹800 Total (₹300 Reg + ₹500 T-Shirts)"
+                              : "₹950 Total (₹450 Reg + ₹500 T-Shirts)"}
+                          </Typography>
+                        </Box>
+
                         <Box>
                           <Typography
                             sx={{
